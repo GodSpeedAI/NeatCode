@@ -1,39 +1,72 @@
 # Roadmap
 
-What's next. 
+What's next.
 
 ---
 
 ## Now
 
-**Nanobanana hook for image-heavy briefs.** Today the integration is recommend-only — Hallmark tells the user to go generate something and bring it back. Image-heavy briefs (e-commerce, travel, food, lookbook) route to typography-only and feel underserved. Add a first-class hook that writes a prompt, invokes the API, ingests the returned image, and wires it into the build (cache by prompt hash). Pair with a new image-led theme (working title *Plate*) tuned for full-bleed photographic compositions.
+**Language-specific overlays.** The taxonomy is language-agnostic by design, which costs
+precision. A thin overlay per ecosystem — Rust ownership and `unwrap` discipline, Go error
+wrapping and goroutine lifetime, Python mutable defaults and async gotchas, TypeScript
+structural-typing escapes and `any` leakage — loaded only when the changed files are in that
+language. Overlays add signals and exceptions; they do not add new families.
 
 ---
 
 ## Next
 
-**Brand-first flow.** From a short product description, Hallmark generates a complete brand — palette, type system, voice, custom imagery via Nanobanana — and locks it into a `design.md`. The user then runs Hallmark normally and the whole site builds against that generated brand, page after page. Closes the gap for users who have a product idea but no brand yet.
+**Caller discovery beyond grep.** `lib/context.mjs` finds callers textually and is honest about
+its blind spots — dynamic dispatch, reflection, string-built names, other repositories. Where a
+language server or an existing index is available, use it and record which method found what.
+The finding model already distinguishes *confirmed* from *probable*; the harness should feed
+that distinction rather than leaving it to the model.
 
-**Theme-aware motion tokens.** Per-theme `--dur-micro` / `--dur-short` / `--dur-long`, scaled by the table already in [`microinteractions.md`](skills/hallmark/references/microinteractions.md). Atelier should feel slower than Brutal; today they share durations. One pass through the tokens file.
+**Architecture-test generation.** The conformance protocol frequently ends at "enforce this
+with a dependency test." Emitting that test — in the repository's own test framework — closes
+the loop between naming a rule and making it hold. Nominal architecture stays nominal exactly
+as long as nothing fails when it is violated.
 
-**`hallmark variant`** — produce three structurally distinct versions of the same brief side-by-side; the user picks one or asks for a fourth. The biggest cause of "AI feel" is users accepting the first output because they didn't know it could be different.
+**`engineering.md` reconciliation as a first-class operation.** Today `study` writes the file
+and the default flow reads it. The missing piece is a cheap "has this drifted?" pass that
+compares recorded claims against current reality and reports only the deltas.
 
-**Structural cookbook.** [`structure.md`](skills/hallmark/references/structure.md) catalogues the *axes* of variety but doesn't show what a left-margin-headed, hairline-divided, no-image page actually looks like assembled. Twelve to twenty worked fingerprints with short HTML/CSS sketches — patterns are easier to reach for than principles.
+**Verification-command inference.** `neatcode checks` reads manifests. It should also read CI
+configuration, which is where the *authoritative* definition of "passing" usually lives, and
+flag the gap when local checks are weaker than CI's.
 
-**Tactile-rebellion reference.** Controlled imperfection — handmade textures, hand-drawn SVG paths, controlled-jitter typography (a 0.5° tilt on one mark is taste; on every word it's chaos). Where the field is going.
-
-**Charts reference for analytics pages.** AI-generated charts are an obvious tell — rainbow palettes, dense gridlines, 3D donuts, dual-axis line spaghetti. Add a `data-viz.md` that picks small multiples over single dense charts, restrains colour to one accent + neutrals, and bans the worst types outright. Half of every dashboard is chart-shaped, and Hallmark currently has nothing to say about it.
-
-**Multi-page coherence.** The structural-variety rule is correct for variety, wrong for brand consistency inside a multi-page product. Lock the brand axes (type, colour, divider language); vary the page-voice axes (heading placement, body composition, button voice). Different *pages* of the same site, not different *sites*.
-
-**`study` reads your own codebase too.** Today `study` accepts a screenshot or a URL of an external design. Add a third input mode: a path to your project. Hallmark walks the files, identifies tokens + the structural fingerprint actually in use, and emits the same `design.md`. Closes the loop for users who arrive with code, not a brief — same verb, same output, third input mode.
+**Review of a change series.** Reviewing `main...HEAD` as one diff hides the shape of the work.
+Per-commit review with a cross-commit summary would catch the pattern where commit 3 undoes
+commit 1, and would make "was this bisectable?" answerable.
 
 ---
 
 ## Later
 
-- **`hallmark explain`** — narrate the choices axis by axis. The skill teaches; users start making the same calls themselves.
-- **Negative-capability rules** — for each anti-pattern, the perceptual or cognitive reason it fails. Understanding it beats knowing it.
-- **Emotion-first prompting** — *nostalgic · optimistic · sceptical* instead of *editorial · brutalist · austere*. Today's tone words don't reach.
-- **Sound + haptic policy** — when web sound is acceptable (gaming, accessibility-augmenting) without crossing into kitsch.
-- **Live preview as an MCP server** — watch the file, render in a sandbox, screenshot, feed the screenshot back for self-critique against the slop test. Closes the loop between generation and audit.
+- **A worked corpus.** Real AI-generated patches with expert findings attached, used to
+  calibrate severity and measure false-positive rate. The skill currently asserts its
+  calibration; it should be able to demonstrate it.
+- **Cross-repository study.** Extracting engineering DNA across a set of related services, to
+  find the conventions that are organizational rather than local.
+- **Pull-request integration.** Reading the description and the review conversation as stated
+  intent — treated as untrusted evidence, which is what makes it interesting.
+- **Debt ledger with interest.** `engineering.md` records known debt. Recording *when* it was
+  recorded and what has since been built on top of it would make the trajectory claims in the
+  taxonomy measurable rather than rhetorical.
+
+---
+
+## Explicitly not planned
+
+Scope discipline is part of the product, so the exclusions are part of the roadmap.
+
+- **A hosted service, an IDE extension, or telemetry.** This is a skill and a small harness.
+- **A universal multi-language static analyzer.** Code acquires evidence; the skill judges. An
+  AST framework would move judgment into procedural rules, which is the design this project
+  exists to avoid.
+- **Generalization to non-code "idea slop."** The generalization is real and is discussed in
+  [`docs/origin-conversation.md`](docs/origin-conversation.md). It is a different product.
+  Diluting this one into a generic intellectual-quality framework would cost the specificity
+  that makes it useful.
+- **A design mode.** The upstream project NeatCode derives from — Hallmark — already does that
+  well, and better than a bolted-on second product would.

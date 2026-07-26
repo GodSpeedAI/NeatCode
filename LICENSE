@@ -1,6 +1,15 @@
 MIT License
 
+Copyright (c) 2026 NeatCode contributors
 Copyright (c) 2026 Hallmark contributors
+
+NeatCode is derived from Hallmark (https://github.com/Nutlope/hallmark), an
+anti-AI-slop design skill released under the MIT License. NeatCode retains
+Hallmark's skill architecture — a natural-language instruction kernel with
+progressively-loaded references, verb dispatch, a pre-emit critique, and a
+gate-based quality check — and replaces its subject matter entirely: design
+judgment becomes software-engineering judgment. The copyright notice above is
+retained in accordance with the MIT License.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

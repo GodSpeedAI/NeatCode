@@ -1,28 +1,34 @@
 {
-  "name": "hallmark",
-  "version": "1.1.0",
-  "description": "A design skill for AI coding assistants. Makes the UIs they generate look made, not generated. Powered by Together AI.",
+  "name": "neatcode-skill",
+  "version": "2.0.0",
+  "description": "A software-engineering skill for AI coding agents. Reviews diffs, audits repositories, restructures weak implementations, and extracts engineering DNA — so generated code is reasoned, not generated.",
   "keywords": [
     "claude",
     "claude-code",
     "cursor",
     "codex",
     "skill",
-    "design",
-    "ui",
-    "anti-ai-slop",
-    "typography",
-    "oklch",
-    "together-ai"
+    "code-review",
+    "code-quality",
+    "technical-debt",
+    "architecture",
+    "refactoring",
+    "diff",
+    "anti-ai-slop"
   ],
   "license": "MIT",
   "type": "module",
+  "bin": {
+    "neatcode": "bin/neatcode.mjs"
+  },
   "files": [
-    "skills"
+    "skills",
+    "bin",
+    "lib"
   ],
   "skill": {
-    "entry": "skills/hallmark/SKILL.md",
-    "references": "skills/hallmark/references",
+    "entry": "skills/neatcode/SKILL.md",
+    "references": "skills/neatcode/references",
     "harnesses": [
       "claude-code",
       "cursor",
@@ -30,6 +36,10 @@
     ]
   },
   "scripts": {
+    "test": "node --test",
     "serve": "python3 -m http.server --directory site 4173"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

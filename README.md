@@ -1,112 +1,189 @@
-# Hallmark
+# NeatCode
 
-**A design skill for Claude Code, Cursor, and Codex that refuses to look AI-generated.**
+**A software-engineering skill for Claude Code, Cursor, and Codex that refuses to ship
+plausible code.**
 
-[Live demo →](https://www.usehallmark.com) &nbsp;·&nbsp; twenty themes &nbsp;·&nbsp; four verbs &nbsp;·&nbsp; press `T` to cycle.
+[Live demo →](./site/index.html) &nbsp;·&nbsp; five verbs &nbsp;·&nbsp; fourteen failure families &nbsp;·&nbsp; fifty-two pre-completion gates.
 
-Made by Together AI.
+> Code that is reasoned, not generated.
 
-<p align="center">
-  <img src="site/OG-hallmark.png" alt="Hallmark, a design skill that refuses to look AI-generated" />
-</p>
-
-Hallmark picks a macrostructure for the brief, dresses it in one of twenty themes, runs fifty-seven slop-test gates plus a pre-emit self-critique, and refuses the on-distribution defaults every LLM was trained into. Two pages by Hallmark for two different briefs feel like different sites, not colour-swaps of the same template.
+*Neat* in the joinery sense: **a neat fit** — exact, earned, nothing left over. Not tidiness,
+not formatting. NeatCode has nothing to say about brace style and a great deal to say about
+whether that `ProviderManager` should exist.
 
 ---
 
-## Four verbs
+## What it is for
+
+The problem is not that AI writes ugly code. It is that AI writes **plausible** code: locally
+correct, globally wrong. It adds an interface with one implementation. It writes a second
+`normalizeEmail` beside the one that already exists. It calls an API that does not exist in the
+installed version. It wraps a registry in a manager that forwards every call. It writes a test
+that passes against the bug. It says "all tests pass" without running them.
+
+Each of those is defensible in isolation. Together they are how a codebase becomes
+unmaintainable in six months.
+
+NeatCode installs the judgment of an engineer who has read the repository — before the agent
+writes, and again before it claims to be done.
+
+---
+
+## Five verbs
 
 | Verb | What it does |
 | --- | --- |
-| *(default)* | Build new UI. Picks a macrostructure, applies the rule-set, runs the slop test before handing back. |
-| `hallmark audit <target>` | Score existing code against the anti-patterns. Punch list, no edits. |
-| `hallmark redesign <target>` | Throw out the structure, keep copy + IA + brand, rebuild with a different fingerprint. |
-| `hallmark study <screenshot \| URL>` | Extract the **DNA** from a design you admire: macrostructure, type-pairing, colour anchor. Refuses pixel-clones and paid templates. Optionally emits a portable `design.md` for handoff to other AI tools. |
+| *(default)* | Implement a change. Orient in the repository, state the contract, choose the structure **before** the syntax, implement the smallest coherent change, then critique the diff before declaring completion. |
+| `neatcode review [source]` | Judge a proposed change — working tree, staged, a commit, a range, a branch, a patch, a pasted diff. Every finding labelled **introduced · worsened · exposed · pre-existing · resolved**. |
+| `neatcode audit <target>` | Judge existing code — a file, a module, a subsystem, the repository. Architecture conformance, authority, boundaries, tests, operational readiness, debt. No edits. |
+| `neatcode restructure <target>` | Keep the behaviour, replace the implementation strategy. Characterizes behaviour before changing it. |
+| `neatcode study <target>` | Extract the repository's engineering DNA. Separates **invariants** from **conventions** from **residue**. Optionally writes a portable `engineering.md`. |
+| `neatcode harden <target>` | Take working-on-the-happy-path code to production credibility: idempotency, concurrency, cancellation, recovery, observability, security boundaries, migrations, wiring. |
 
 ---
 
-## Different briefs, different shapes
+## The change envelope
 
-Each generated from a different brief. The skill picks the theme, structure, and craft to fit each one, not from a template.
+A diff alone cannot be judged. A new `ProviderManager` that forwards to a `ProviderRegistry`
+is unearned indirection **or** a deliberate stable facade, and nothing in the diff decides
+which.
 
-<table>
-  <tr>
-    <td width="25%"><a href="https://www.usehallmark.com/examples/hum-07/"><img src="docs/screenshots/hero-hum-07.jpg" alt="Bubble guided sourdough app hero" /></a></td>
-    <td width="25%"><a href="https://www.usehallmark.com/examples/cobalt-01/"><img src="docs/screenshots/hero-cobalt-01.jpg" alt="Distil content-extraction API hero" /></a></td>
-    <td width="25%"><a href="https://www.usehallmark.com/examples/carnival-01/"><img src="docs/screenshots/hero-carnival-01.jpg" alt="Cold Snap record-label EP hero" /></a></td>
-    <td width="25%"><a href="https://www.usehallmark.com/examples/lumen-01/"><img src="docs/screenshots/hero-lumen-01.jpg" alt="Cinder AI reasoning tool hero" /></a></td>
-  </tr>
-  <tr>
-    <td><b>Bubble</b><br/><sub>Sourdough app · Hum</sub></td>
-    <td><b>Distil</b><br/><sub>Extraction API · Cobalt</sub></td>
-    <td><b>Cold Snap</b><br/><sub>Record label · Carnival</sub></td>
-    <td><b>Cinder</b><br/><sub>AI tool · Lumen</sub></td>
-  </tr>
-  <tr>
-    <td><a href="https://www.usehallmark.com/examples/custom-03/"><img src="docs/screenshots/hero-custom-03.jpg" alt="Ferns and Fathom tea menu hero" /></a></td>
-    <td><a href="https://www.usehallmark.com/examples/garden-01/"><img src="docs/screenshots/hero-garden-01.jpg" alt="Hollowback Apiary honey farm hero" /></a></td>
-    <td><a href="https://www.usehallmark.com/examples/riso-01/"><img src="docs/screenshots/hero-riso-01.jpg" alt="Off-Register risograph print fair hero" /></a></td>
-    <td><a href="https://www.usehallmark.com/examples/press-01/"><img src="docs/screenshots/hero-press-01.jpg" alt="Press Quaternary type studio hero" /></a></td>
-  </tr>
-  <tr>
-    <td><b>Ferns &amp; Fathom</b><br/><sub>Tea menu · Custom</sub></td>
-    <td><b>Hollowback Apiary</b><br/><sub>Honey farm · Garden</sub></td>
-    <td><b>Off-Register</b><br/><sub>Print fair · Riso</sub></td>
-    <td><b>Press Quaternary</b><br/><sub>Type studio · Custom</sub></td>
-  </tr>
-  <tr>
-    <td><a href="https://www.usehallmark.com/examples/tally/"><img src="docs/screenshots/hero-tally.jpg" alt="Tally SaaS product page hero" /></a></td>
-    <td><a href="https://www.usehallmark.com/examples/wayfare/"><img src="docs/screenshots/hero-wayfare.jpg" alt="Wayfare travel booking hero" /></a></td>
-    <td><a href="https://www.usehallmark.com/examples/najm/"><img src="docs/screenshots/hero-najm.jpg" alt="NAJM Moroccan fashion brand hero" /></a></td>
-    <td><a href="https://www.usehallmark.com/examples/hyperlane/"><img src="docs/screenshots/hero-hyperlane.jpg" alt="Hyperlane developer infrastructure hero" /></a></td>
-  </tr>
-  <tr>
-    <td><b>Tally</b><br/><sub>SaaS · modern-minimal</sub></td>
-    <td><b>Wayfare</b><br/><sub>Travel · atmospheric</sub></td>
-    <td><b>NAJM</b><br/><sub>Fashion brand</sub></td>
-    <td><b>Hyperlane</b><br/><sub>Dev infrastructure</sub></td>
-  </tr>
-</table>
+```text
+change envelope
+= requested intent
++ diff or change set
++ changed-file context
++ repository instructions
++ declared architecture
++ observed repository structure
++ relevant dependencies and callers
++ tests and verification evidence
+```
 
-Each page is self-contained HTML + CSS, stamped with its macrostructure in the CSS comment. Browse the full set at [usehallmark.com](https://www.usehallmark.com) or under [`site/_tests/`](site/_tests/).
+A small zero-dependency harness assembles it deterministically:
+
+```bash
+neatcode envelope --staged --verb review --verify "npm test"
+neatcode envelope --range main...HEAD --verb review
+neatcode envelope --paths src/billing --verb audit
+neatcode envelope --repo --verb study --json
+neatcode checks                                  # what the repo declares as proof
+```
+
+The harness **acquires and structures evidence**. It never judges. There is no field in the
+envelope schema meaning "assumed to pass" — that absence is the point.
 
 ---
 
-## Custom <sup>NEW</sup>
+## What it actually checks
 
-When a brief carries creative intent that no catalog theme fits, Hallmark switches to **Custom** and designs the page from scratch: a made-to-measure palette, type, and layout. Same 57 slop-test gates, no template underneath.
+**Two questions**, applied relentlessly:
 
-<table>
-  <tr>
-    <td width="50%"><a href="https://www.usehallmark.com/examples/custom-02/"><img src="docs/screenshots/hero-custom-02.jpg" alt="The Cascadia Nightjar sleeper-train ticket hero" /></a></td>
-    <td width="50%"><a href="https://www.usehallmark.com/examples/custom-04/"><img src="docs/screenshots/hero-custom-04.jpg" alt="The Mend Assembly repair-café broadsheet hero" /></a></td>
-  </tr>
-  <tr>
-    <td><b>The Cascadia Nightjar</b><br/><sub>Sleeper-train ticket · Custom</sub></td>
-    <td><b>The Mend Assembly</b><br/><sub>Repair-café broadsheet · Custom</sub></td>
-  </tr>
-</table>
+- **Earnedness** — *what concrete constraint earns this complexity?* "It's more extensible" is
+  not a constraint. A second implementation that exists today is.
+- **Evidence** — *what supports the claim that this is correct and complete?* "Tests pass" is a
+  claim about a command you ran and an exit code you saw.
 
-It stays a quiet branch; vanilla briefs never see it. The protocol lives in [`custom-theme.md`](skills/hallmark/references/custom-theme.md).
+**Fourteen failure families**, each entry carrying its definition, signals, underlying
+reasoning failure, risk, debt trajectory, legitimate exceptions, likely false positives,
+correction, and verification:
+
+epistemic · context · contract · completion · abstraction · authority · boundary ·
+state & concurrency · failure-handling · tests · observability · security · change-discipline ·
+maintainability theater
+
+**An architectural conformance protocol** that compares what a repository *claims* against
+what its imports and call graph *express*, and returns a verdict: conformant · partially
+conformant · **nominal** · contradictory · unverifiable · coherent emergent alternative.
+
+That last verdict matters: code that has diverged from its README into something coherent is
+not decayed. The documentation is wrong, and that is the cheaper fix.
+
+**Fifty-two pre-completion gates** in eight groups, and a six-axis critique — correctness ·
+repository fit · semantic integrity · restraint · operational credibility · evidence — where
+anything below 3 forces a revision pass.
 
 ---
 
 ## Install
 
 ```
-npx skills add nutlope/hallmark
+npx skills add GodSpeedAI/NeatCode
 ```
 
-Re-run any time to update. Or copy [`SKILL.md`](skills/hallmark/SKILL.md) + [`references/`](skills/hallmark/references/) into:
+Or copy [`SKILL.md`](skills/neatcode/SKILL.md) + [`references/`](skills/neatcode/references/) into:
 
-- **Claude Code**: `~/.claude/skills/hallmark/`
-- **Cursor**: `.cursor/rules/hallmark.mdc` (body of `SKILL.md`, no frontmatter)
-- **Codex**: `~/.codex/skills/hallmark/` (personal) or `.codex/skills/hallmark/` (project-scoped)
+- **Claude Code**: `~/.claude/skills/neatcode/`
+- **Cursor**: `.cursor/rules/neatcode.mdc` (body of `SKILL.md`, no frontmatter)
+- **Codex**: `~/.codex/skills/neatcode/` (personal) or `.codex/skills/neatcode/` (project-scoped)
 
-The rule-set lives in [`SKILL.md`](skills/hallmark/SKILL.md) and [`references/`](skills/hallmark/references/). Worked examples in [`docs/recipes.md`](docs/recipes.md) and [`docs/study-examples.md`](docs/study-examples.md).
+For the harness:
+
+```bash
+npm install -g neatcode-skill    # provides the `neatcode` command
+```
+
+The skill works without it — it falls back to plain `git diff` — but the harness is what makes
+"did that check actually run?" an auditable fact rather than a recollection.
+
+---
+
+## Try it
+
+```bash
+# review what you are about to commit
+git add -A && neatcode envelope --staged --verb review --verify "npm test"
+# then, in your agent: "neatcode review the staged changes"
+```
+
+Worked invocations in [`docs/recipes.md`](docs/recipes.md). Worked DNA extractions in
+[`docs/study-examples.md`](docs/study-examples.md).
+
+---
+
+## Design notes
+
+**The intelligence is natural language.** The judgment lives in Markdown — a kernel plus
+progressively-loaded references — not in procedural code. Code acquires and structures
+evidence; the skill interprets it. That division is deliberate and load-bearing.
+
+**No source-file stamps.** NeatCode never writes marker comments into your codebase. Comment
+stamps are exactly the ceremonial noise it reports as a finding. The record lives in the
+completion block and, for durable facts, in `engineering.md`.
+
+**No variety rule.** Consistency *is* the quality in a codebase. Any instinct to "do it
+differently this time" is a bug in the agent, not a feature of the skill.
+
+**Style is not a defect.** If a linter runs in CI, the linter owns it. A skill that reports
+formatting as a finding trains its users to ignore its findings.
+
+---
+
+## Derivation
+
+NeatCode is derived from [Hallmark](https://github.com/Nutlope/hallmark), an anti-AI-slop
+*design* skill by Together AI, released under the MIT License. It keeps Hallmark's architecture
+— a natural-language kernel, progressively-loaded references, verb dispatch, a pre-emit
+critique, and gate-based quality checks — and replaces the subject matter entirely: design
+judgment becomes engineering judgment.
+
+Two mechanisms were deliberately **inverted** rather than translated, and the reasoning is
+worth stating because it is the sharpest difference between the two products:
+
+- **Theme rotation → profile inheritance.** Hallmark rotates its visual fingerprint so two
+  pages do not look alike. Code must not vary to avoid repetition; a codebase that varies for
+  variety's sake is unlearnable.
+- **CSS stamps → report blocks.** Hallmark stamps its output. A code skill that wrote marker
+  comments into source files would be emitting the exact debt it exists to catch.
+
+The reasoning behind the transformation is preserved in
+[`docs/origin-conversation.md`](docs/origin-conversation.md).
+
+There is **no `hallmark` compatibility alias.** The two skills judge different artifacts;
+routing a design request into a code skill would be worse than a missing command.
 
 ---
 
 ## Licence
 
-MIT. Use it, fork it, ship it.
+MIT. Use it, fork it, ship it. See [`LICENSE`](LICENSE) for the retained upstream notice.

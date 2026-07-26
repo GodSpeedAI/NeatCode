@@ -1,176 +1,172 @@
-# `hallmark study` — three worked examples
+# Study examples — worked DNA extractions
 
-How `study` reads a screenshot the user admires, returns a diagnosis, and (optionally) rebuilds the user's content with the extracted DNA. Each worked example below shows: what the user pasted · what the skill names · what it refuses to do · what it produces.
+Three worked `neatcode study` runs. Each shows what the verb is actually for: separating what a
+repository **claims**, what it **expresses**, and — the distinction the whole verb rests on —
+which of its repeated patterns are invariants, which are conventions, and which are residue.
 
-The whole point of `study`: extract **structural DNA** (macrostructure + archetypes + type-pairing role + colour anchor + rhythm), **never pixels**. If the user wants a 1:1 copy, they want a different tool. Hallmark hands them a diagnosis and lets them keep the bones.
+> **Repetition is not intent.** A pattern repeated fifty times may be a load-bearing invariant,
+> a reasonable convention, or the fossil record of one bad afternoon that everything since has
+> copied.
+
+Getting that wrong is expensive in both directions. Treating residue as invariant freezes an
+accident into the architecture. Treating an invariant as residue breaks the system on the next
+change.
 
 ---
 
-## Example A · A Pentagram-style editorial portfolio
+## 01 · A service that outgrew its README
 
-**What the user pastes:** a screenshot of a New York studio's portfolio site — large italic-serif name in the top-left margin, numbered project list flowing down the page, generous warm-cream paper, a single warm-orange accent on the active project, a hairline rule between rows. (User says: *"I want my portfolio to feel like this.")*
+**Invocation:** `neatcode study .` in a five-year-old Node service.
 
-### Refuse-or-proceed check
+**In one paragraph** *(the report opens here — a reader who stops after this should still have
+the most important thing)*:
 
-Public reference for inspiration → proceed. (Refusal heuristics fire on: paid-template-marketplace listings, copy-protected portfolios. None match.)
+> A modular monolith in vocabulary and a layered application in practice. Billing owns its own
+> state and enforces it well; identity and catalog share one ORM entity set and cannot be
+> separated without a schema change. The repository is mid-migration from callback-style
+> handlers to async ones — 31 of 44 converted, the remainder in `src/legacy/`. **Build on the
+> async side.**
 
-### Diagnosis report (what `study` returns first)
+**Explicit claims**
+- "Each module owns its data; no cross-module database access" — `docs/adr/0002.md:8`
+- "Domain must not import infrastructure" — `AGENTS.md:31`
 
-> **Macrostructure:** **Specimen** (numbered left-margin labels + huge italic serif + asymmetric spans + typographic-only CTA).
->
-> **Hero archetype:** H4 Margin-Number Display — the page's only anchor is a vertical column of two-digit indices.
->
-> **Pitch archetype:** none. The work is the pitch.
->
-> **Footer archetype:** Ft1 Single-Line Colophon — studio name, year, contact, three links, no nav.
->
-> **Display family role:** italic editorial serif (high optical size, soft axis, ink-black). **Body family role:** geometric sans (humanist Inter-Tight-or-similar at 350-400 weight). Two free candidates: *Fraunces* italic display + *Geist* body. One paid candidate the user might confirm: *Tiempos Headline* + *Söhne*. The skill names *roles*, not exact font IDs — visual font ID is unreliable.
->
-> **Surface lightness band:** light (paper L ≈ 96%). Slight warm tint at hue 80 — Pentagram-warm cream, not stark white.
->
-> **Accent hue band + chroma:** warm-orange ~25-30°, low chroma (≤ 0.13), used at < 5% of viewport. One accent, applied to active state and the one number the brand wants the visitor to remember.
->
-> **Density verdict:** sparse. ~3-4 macro elements on the first viewport. Generous vertical margin between rows (≥ `--space-3xl`).
->
-> **Type-pairing role:** italic-display + sans-body — the canonical editorial pairing.
->
-> **Two anti-patterns the screenshot has** that you should NOT carry over:
->
-> 1. The hover-state on the number-label uses a slow ease-in-out 800 ms colour fade. Per `microinteractions.md` § The timing canon, hover state should be 150–200 ms. Carry the *idea* (colour-shift on hover); shorten the *duration*.
-> 2. The footer text is set at 11 px with 0.06em tracking — under the 14 px floor for body copy. Bump to 12-13 px on rebuild, keep the tracking.
+**Conformance — partially conformant.** Billing honours both claims. `identity` and `catalog`
+share `prisma/schema.prisma` models and query each other's tables (`src/catalog/pricing.ts:44`).
 
-### Confirmation question
+**Invariants** — violating these breaks something nameable:
+- Subscription status changes only through `SubscriptionState.transition()`. Enforced by a
+  private field *and* `test/architecture.test.ts:14`. Audit records depend on it.
+- Money is `Decimal`, never `number`. Enforced by the type system throughout.
 
-> *"Adopt this DNA wholesale, or change one axis? For example, I could keep the macrostructure (Specimen) but pick a theme that better matches your work — if your tone is more ink-blue and B2B, I'd suggest **Plain** (pure-white paper) instead of the warm-cream **Specimen** theme."*
+**Conventions** — follow for consistency; not load-bearing:
+- Handlers return `Result<T, AppError>` rather than throwing. Universal in `src/`, unenforced.
+- Tests colocate as `*.test.ts` beside the source.
 
-### What `study` builds when the user says "go"
+**Residue** — do not propagate:
+- The `*Manager` suffix on six classes in `src/legacy/`. Absent from everything written after
+  2024-03; no rationale in any ADR; the newer equivalents are named for their responsibility.
+- `try/catch` blocks that log and rethrow unchanged, in those same six files. Adds nothing.
 
-Macrostructure stamp:
-```css
-/* Hallmark · macrostructure: Specimen · H4 hero knobs: number-column=margin, alignment=left-bias
- * theme: Specimen · accent: warm-orange ~3% · enrichment: none
- * studied: yes · DNA-source: user reference · paid-fonts: not confirmed (free pairing applied)
- */
+**How the residue was identified — this is the step that matters.** `git log` on the pattern:
+present in files last substantially edited before 2024-03, absent from every file created
+since. No ADR mentions it. Two recent modules solve the same problem without it. That is copied
+habit, not convention.
+
+**Contradiction**
+- `README.md:22` describes an event-driven architecture. The event bus dispatches synchronously
+  and awaits its handlers (`src/events/bus.ts:31`). One of the two should change; the cheaper
+  fix is the README.
+
+**Unknown**
+- Whether the `catalog`/`identity` schema sharing is deliberate or accreted. No ADR either way;
+  the introducing commit (`4f2a1c`) has the message "wip". **Ask a maintainer** — the answer
+  decides whether that coupling is a finding or a design.
+
+Recording that as `unknown` rather than guessing is the point. An inferred answer here would
+have propagated into `engineering.md` and been treated as fact by every later run.
+
+---
+
+## 02 · A compiler, studied before contributing
+
+**Invocation:** `neatcode study src/` in a Rust source-to-source compiler, before a first
+contribution.
+
+**In one paragraph:**
+
+> A genuine pipeline: five stages with distinct owned representations, each testable with a
+> fixture in and a fixture out. Stage boundaries hold everywhere except name resolution, which
+> the parser performs for one construct — a deliberate, documented exception. The dominant
+> engineering profile is *pipeline*; the surrounding CLI is *direct*.
+
+**Invariants**
+- Each stage consumes one representation and produces the next. No stage reaches backward.
+  Enforced structurally: the crate graph makes a backward call impossible to compile.
+- Diagnostics accumulate rather than abort. `Diagnostics` is threaded through every stage; no
+  stage returns `Err` for a user-facing problem.
+- Spans are preserved through every lowering. Enforced by `tests/spans.rs`.
+
+**Convention**
+- Fixture-driven tests: `tests/fixtures/<stage>/<case>.in` + `.expected`. Universal, unenforced
+  by tooling, obviously intentional — the harness reads any file matching the shape.
+
+**Documented exception, not residue**
+- `parse::resolve_imports` performs name resolution inside the parser, which the stage rule
+  otherwise forbids. `docs/adr/0007.md:14` records the reason (import paths affect lexing of
+  raw-string delimiters) and the rejected alternative (a pre-pass). This is *earned* structure
+  and belongs in `engineering.md` § Accepted patterns so nobody re-litigates it.
+
+**Note the difference from example 01.** Both are patterns that violate a stated rule. One had a
+recorded reason and a rejected alternative; the other had a commit message reading "wip". That
+is the entire distinction between an exception and drift, and it is discoverable in about four
+minutes of reading ADRs.
+
+**Unknown**
+- Whether the `lower` stage's arena allocation is a measured decision or an assumption. No
+  benchmark in the repository. If it is unmeasured, the *performance-constrained* profile is
+  being applied without evidence — which that profile itself says to report as a finding.
+
+---
+
+## 03 · A repository with nothing to claim
+
+**Invocation:** `neatcode study .` in a two-year-old internal tool with no README architecture
+section, no ADRs, and no `AGENTS.md`.
+
+**In one paragraph:**
+
+> No architecture is claimed. The structure that exists is coherent: feature-oriented at the top
+> level, with a `lib/` used only for genuinely generic helpers. Dependencies flow feature → lib,
+> never lib → feature, and never feature → feature — with exactly one exception. The absence of
+> documentation is not a defect here; the absence of the one thing that would make the exception
+> intelligible is.
+
+**Observed structure**
+- Top level: `billing/`, `catalog/`, `identity/`, `lib/`. Domain nouns, not technical roles.
+- `lib/` contains string helpers, a typed event emitter, and a result type. No domain knowledge.
+  It imports nothing from the feature directories — verified across all 41 files.
+
+**The one exception**
+- `catalog/pricing.ts:9` imports `billing/invoice.ts`. The only cross-feature edge in the
+  repository. Everything else routes through explicit interfaces or events.
+
+**Verdict — coherent emergent alternative.** Nothing claims an architecture, so there is nothing
+to conform to; what exists is internally consistent and would be worth one paragraph in a README.
+
+**What study does *not* do here.** It does not assign a textbook label, and it does not
+recommend adopting one. The finding is the single cross-feature import — worth either
+documenting as deliberate or removing. That is more useful than "consider adopting hexagonal
+architecture," which is what an agent reaching for a label would have produced.
+
+**Residue — one item**
+- Four files still import a `formatDate` helper superseded by a `lib/date.ts` built eight
+  months ago. Not harmful; the two implementations agree today. Worth noting because they
+  *will* diverge, and because it signals an unfinished migration nobody is tracking.
+
+---
+
+## Emitting the portable artifact
+
+Any of these can be locked into a portable `engineering.md`:
+
+> *"Lock that into an engineering.md."*
+
+Every entry is tagged `explicit` / `observed` / `inferred` / `disputed` / `unknown`, cited to
+`path:line` where a citation exists, and stamped with the commit it describes:
+
+```markdown
+- Domain layer must not import infrastructure `explicit` — `AGENTS.md:31`, `docs/adr/0002.md`
+- Enforced by `test/architecture.test.ts:14` `observed`
+- Rule is violated in 6 of 14 domain files `observed` — see `src/domain/order.ts:12`
+- Verdict: **nominal** — claimed and unenforced in practice `observed`
 ```
 
-Output: the user's actual portfolio entries arranged in a numbered-margin column with italic-Fraunces titles and Geist-body summaries. Hover delays shortened to 200 ms. Footer text bumped to 12 px. The bones come from the screenshot; the words and projects come from the user.
+**The provenance tags are the whole safeguard.** Without them the file becomes an authoritative
+hallucination: a document that reads like ground truth, is partly guesswork, and gets more
+confident every time it is copied. An `inferred` entry that a later run verifies gets promoted
+to `observed`. That is the file working as designed.
 
----
-
-## Example B · A Klim-Type-Foundry-leaning specimen
-
-**What the user pastes:** a screenshot of a type-specimen page — full-bleed black paper, single huge geometric-sans display character ("R") tilted -2°, a ruled grid behind it, a footer-band with the typeface name, weight, OpenType features, and a tiny set of glyph callouts. (User says: *"This is the energy I want for our agency rebrand.")*
-
-### Refuse-or-proceed check
-
-Type specimens are typically published references; proceed. (If the screenshot were a paid font foundry's marketing page with an explicit "preview is licensed" watermark, the skill would refuse and ask the user to bring an unconfirmed reference.)
-
-### Diagnosis report
-
-> **Macrostructure:** **Type Specimen** (single character or word centred + ruled grid + footer-band of metadata).
->
-> **Hero archetype:** H9 Single-Glyph — the entire above-the-fold is one letterform.
->
-> **Pitch archetype:** none on the first viewport. The page is *the work being specified*. Pitch (if any) lives below the fold as supporting paragraphs.
->
-> **Footer archetype:** Ft3 Tabular-Specimen — name · weight · OpenType features · designer credit.
->
-> **Display family role:** geometric-sans-heavy (display-display, weights 800-900). **Body family role:** the same sans at 400 — single-font specimen pages are allowed when the single font *is* the design (per `typography.md`). Free candidate: *Bricolage Grotesque 800*. Paid candidate: *Druk* or *NaN Jaune*. *Refuse to guess the exact paid font ID.*
->
-> **Surface lightness band:** dark (paper L ≈ 12%). The dark is uniform across the viewport — no gradient.
->
-> **Accent hue band + chroma:** chromatic-other — single hot-orange callout at ≈ 0.18 chroma, used on **one** OpenType-feature label. Even in a stark specimen, the rule "accent < 5% of viewport" holds.
->
-> **Density verdict:** ultra-sparse. One element above the fold. Density only increases below.
->
-> **Type-pairing role:** single-family specimen (single-font is the design). Body and display the same family at different weights.
->
-> **Two anti-patterns the screenshot has** to NOT carry over:
->
-> 1. The footer-band uses light-grey text (oklch ~75% lightness) on near-black paper. Contrast ratio ~3.2:1 — fails WCAG AA for body. Bump to oklch ~88% on rebuild.
-> 2. The grid lines behind the glyph are at 1 px solid white at 0.4 opacity. On a 4K display this becomes a sub-pixel that disappears or aliases. Use 1 px solid + colour-mix down to 35% lightness instead — keeps visibility across pixel densities.
-
-### Confirmation question
-
-> *"This DNA is for a specimen page, not a marketing page. If you're rebranding an agency, the glyph hero will be impressive on the first visit and pointless after. Suggested adaptation: Type Specimen as the homepage, then a Long Document or Workbench pattern for the about / case-studies / contact pages. Pick: keep all-Specimen, or hybrid?"*
-
-### What `study` builds (hybrid path)
-
-Macrostructure stamp:
-```css
-/* Hallmark · macrostructure: Type Specimen · H9 hero knobs: glyph=user-mark, tilt=-2deg, grid=1px-soft
- * theme: Manifesto · accent: hot-orange ~3% · enrichment: none
- * studied: yes · DNA-source: user reference · paid-fonts: not confirmed (Bricolage 800 free)
- */
-```
-
-The homepage emits the agency's mark in 22-rem Bricolage 800, ruled grid behind, single-line metadata footer. The about and case-study pages inherit the dark-paper + geometric-sans tokens but switch to **Workbench** macrostructure (left-margin index + 1fr content). Brand consistency, structural variety.
-
----
-
-## Example C · A small-studio personal site (Rauno-Freiberg-style)
-
-**What the user pastes:** a screenshot of a personal designer-engineer site — dark-mode paper, a small italic-serif name in the top-left, a single demo embed at the centre (CSS-art clock that ticks), a writing list below. (User says: *"I want my own personal site to feel like this.")*
-
-### Refuse-or-proceed check
-
-An ambiguous source is the edge case here. Per `study.md` § Refusal heuristics: when you can't tell whether the source is the user's own work or someone else's, ask first.
-
-> *"Is this your own work, a public reference for inspiration, or someone else's live site? If it's someone else's live site, I'll extract the DNA at the structural level only — no copy, no demos, no font IDs — and you'll bring your own content. If it's a paid portfolio template, I won't reproduce it."*
-
-User confirms: public reference for inspiration → proceed with DNA extraction only.
-
-### Diagnosis report
-
-> **Macrostructure:** **Long Document** with a centred demo as the hero archetype.
->
-> **Hero archetype:** H5 Centered-Demo — a single hand-built artefact (CSS art, SVG illustration, declarative animation) sized at ~24 rem, centred on the page, no other hero copy above it.
->
-> **Pitch archetype:** P3 List-of-Writings — title + date + 1-line summary, in a tabular column.
->
-> **Footer archetype:** Ft1 Single-Line Colophon.
->
-> **Display family role:** italic editorial serif. **Body family role:** geometric sans, body weight 400. Free candidate pairing: *Fraunces* italic + *Geist*.
->
-> **Surface lightness band:** dark (paper L ≈ 16%). Slight cool tint at hue 240. Inks at ~90-95% L, also slight cool.
->
-> **Accent hue band + chroma:** chromatic-other — green at hue 145, ≈ 0.14 chroma. Used on the active demo's signal element (the ticking dot), nowhere else.
->
-> **Density verdict:** sparse-medium. Hero demo + ~12-line writing list above the fold.
->
-> **Type-pairing role:** italic-display-with-sans-body — same as Specimen, just on dark paper.
->
-> **One anti-pattern the screenshot has** to NOT carry over:
->
-> 1. The CSS-art clock loops at 1 fps with no `prefers-reduced-motion` fallback. **Always pair declarative animation with a reduced-motion alternative** (`microinteractions.md` § Reduced motion is a first-class state, not an afterthought).
->
-> One thing the screenshot does *better than most* and you SHOULD carry over:
->
-> 1. The italic name in the top-left has a baseline at the same y-position as the centred demo's vertical centre — a subtle horizontal-baseline alignment that makes the page feel composed rather than stacked. Carry this; it's invisible until removed.
-
-### Confirmation question
-
-> *"The DNA is portable: dark paper · italic-Fraunces name · centred demo · cool-green accent. Two questions before I build: (1) what's your demo? — I can hand-build it as Tier-A CSS art if you describe it, or you can paste an existing animation. (2) do you have ~5 writings to seed the list, or should I leave a placeholder section?"*
-
-### What `study` builds when the user provides their own demo + writings
-
-Macrostructure stamp:
-```css
-/* Hallmark · macrostructure: Long Document · H5 hero knobs: demo=centered, size=24rem
- * theme: Midnight · accent: forest-green ~3% · enrichment: Tier-A custom-craft (user-supplied recipe)
- * studied: yes · DNA-source: user reference · with reduced-motion fallback
- */
-```
-
-Output: the user's actual name in italic-Fraunces top-left, their demo (e.g. an ambient breathing-loop) hand-built as CSS art with an explicit `@media (prefers-reduced-motion: reduce)` fallback, their writings tabulated below in Geist body. The bones from the screenshot; the demo and writings from the user. **No pixel-faithful reproduction.**
-
----
-
-## What `study` doesn't do (worth restating)
-
-1. **Names the font role, not the font ID.** Visual font identification is unreliable. The skill proposes one or two real candidates from the canon and asks the user to confirm.
-2. **Never copies pixels.** The DNA is the macrostructure + archetype + colour-anchor + type-pairing — not the dress.
-3. **Refuses the obvious bad sources.** Paid-template-marketplace listings; copy-protected portfolios without permission.
-4. **Always disclosures the substitutions.** When the screenshot's font is paid (Tiempos / Söhne / Druk) and the user hasn't confirmed a licence, the skill names a free understudy (Fraunces / Inter Tight / Bricolage Grotesque) and *says it's substituting*.
-
-These three examples cover the most common categories of `study` request: an editorial portfolio, a type-specimen statement page, and a small personal site. The protocol is the same for every screenshot — refuse-or-proceed, diagnose, confirm, build. See [`study.md`](study.md) for the full protocol.
+If `engineering.md` already exists, `study` **reconciles** rather than overwrites — showing what
+changed, what is newly contradicted, and what was resolved. It never silently rewrites a file a
+human wrote.
