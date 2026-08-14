@@ -13,7 +13,8 @@
 **A software-engineering skill for Claude Code, Cursor, and Codex that refuses to ship
 code slop.**
 
-[![skills.sh](https://skills.sh/b/GodSpeedAI/NeatCode)](https://skills.sh/GodSpeedAI/NeatCode)
+[![npm version](https://img.shields.io/npm/v/%40godspeedai%2Fneatcode)](https://www.npmjs.com/package/@godspeedai/neatcode)
+[![license](https://img.shields.io/npm/l/%40godspeedai%2Fneatcode)](LICENSE)
 
 > Code that is reasoned, not generated.
 
