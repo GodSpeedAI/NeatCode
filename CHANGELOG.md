@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/GodSpeedAI/NeatCode/compare/v1.0.1...v1.0.2) (2026-08-14)
+
+
+### Bug Fixes
+
+* use a PAT so release-please's releases trigger publish.yml ([7d4a516](https://github.com/GodSpeedAI/NeatCode/commit/7d4a516621a6aba7feb3a18cc5216d3aec6854f4))
+
 ## [1.0.1](https://github.com/GodSpeedAI/NeatCode/compare/v1.0.0...v1.0.1) (2026-08-14)
 
 
