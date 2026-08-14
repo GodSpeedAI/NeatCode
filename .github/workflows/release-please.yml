@@ -14,10 +14,9 @@ jobs:
     steps:
       - uses: googleapis/release-please-action@v4
         with:
-          release-type: node
-          # Release Please bumps package.json by default. These extra files hold
-          # the same version string and must move in lockstep, or the skill's
-          # integrity test (SKILL.md version == package.json version) fails.
-          extra-files: |
-            skills/neatcode/SKILL.md
-            .claude-plugin/plugin.json
+          # release-type and extra-files live in release-please-config.json now —
+          # skills/neatcode/SKILL.md and .claude-plugin/plugin.json hold the same
+          # version string and must move in lockstep, or the skill's integrity
+          # test (SKILL.md version == package.json version) fails.
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

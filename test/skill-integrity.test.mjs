@@ -73,7 +73,11 @@ test('skill frontmatter is well formed and matches the package version', () => {
   const fields = Object.fromEntries(
     frontmatter[1].split('\n').map((line) => {
       const at = line.indexOf(':');
-      return [line.slice(0, at).trim(), line.slice(at + 1).trim().replace(/^"|"$/g, '')];
+      let value = line.slice(at + 1).trim();
+      // release-please annotates the version line with a trailing YAML comment
+      // (`# x-release-please-version`); strip it the way a real YAML parser would.
+      if (!value.startsWith('"')) value = value.replace(/\s+#.*$/, '').trim();
+      return [line.slice(0, at).trim(), value.replace(/^"|"$/g, '')];
     }),
   );
 
