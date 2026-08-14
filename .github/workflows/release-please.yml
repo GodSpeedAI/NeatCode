@@ -20,3 +20,7 @@ jobs:
           # test (SKILL.md version == package.json version) fails.
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+          # A release created with the default GITHUB_TOKEN can't trigger other
+          # workflows (GitHub's anti-recursion guard), so publish.yml's
+          # `on: release: published` would never fire. A PAT sidesteps that.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
