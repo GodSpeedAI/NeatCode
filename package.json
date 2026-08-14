@@ -1,6 +1,6 @@
 {
   "name": "@godspeedai/neatcode",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A software-engineering skill for AI coding agents. Reviews diffs, audits repositories, restructures weak implementations, and extracts engineering DNA — so generated code is reasoned, not generated.",
   "keywords": [
     "claude",
