@@ -1,0 +1,12 @@
+{
+  "name": "neatcode-skill",
+  "description": "Software-engineering judgment for AI coding agents. Reviews diffs, audits repositories, restructures weak implementations, hardens for production, and extracts engineering DNA — so generated code is reasoned, not generated.",
+  "version": "1.0.0",
+  "author": {
+    "name": "GodSpeedAI",
+    "url": "https://github.com/GodSpeedAI"
+  },
+  "homepage": "https://github.com/GodSpeedAI/NeatCode#readme",
+  "repository": "https://github.com/GodSpeedAI/NeatCode",
+  "license": "MIT"
+}

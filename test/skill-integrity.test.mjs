@@ -48,7 +48,7 @@ function linksIn(file) {
 }
 
 test('package metadata points at files that exist', () => {
-  assert.equal(pkg.name, 'neatcode-skill');
+  assert.equal(pkg.name, '@godspeedai/neatcode');
   assert.ok(existsSync(join(ROOT, pkg.skill.entry)), `missing ${pkg.skill.entry}`);
   assert.ok(existsSync(join(ROOT, pkg.skill.references)), `missing ${pkg.skill.references}`);
   assert.equal(pkg.skill.entry, 'skills/neatcode/SKILL.md');

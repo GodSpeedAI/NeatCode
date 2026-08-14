@@ -1,17 +1,45 @@
-# NeatCode
+<p align="left">
+  <img src="assets/neatcode-wordmark.png"
+       alt="NeatCode"
+       width="320">
+</p>
+
+<p align="center">
+  <img src="assets/neatcode-banner.png"
+       alt="NeatCode — Remove the slop. Reveal the signal."
+       width="100%">
+</p>
 
 **A software-engineering skill for Claude Code, Cursor, and Codex that refuses to ship
-plausible code.**
+code slop.**
 
-[Live demo →](./site/index.html) &nbsp;·&nbsp; five verbs &nbsp;·&nbsp; fourteen failure families &nbsp;·&nbsp; fifty-two pre-completion gates.
+[![skills.sh](https://skills.sh/b/GodSpeedAI/NeatCode)](https://skills.sh/GodSpeedAI/NeatCode)
 
 > Code that is reasoned, not generated.
 
-*Neat* in the joinery sense: **a neat fit** — exact, earned, nothing left over. Not tidiness,
+*Neat* in the joinery sense: **a neat fit**, exact, earned, nothing left over. Not tidiness,
 not formatting. NeatCode has nothing to say about brace style and a great deal to say about
 whether that `ProviderManager` should exist.
 
 ---
+
+## The problem this exists to catch
+
+An agent writes a permission check in one handler. Two files later it needs the same logic,
+doesn't remember writing it the first time, and writes a second version. Both pass their
+tests. Both look reasonable in isolation. Now there are two authorities answering the same
+question, and neither knows the other exists. Nothing fails today. It just waits.
+
+> **Code slop:** plausible code that technically works and has not earned the confidence
+> it projects.
+
+The dangerous part isn't the obvious mess, the giant files and tangled control flow you can
+spot on sight. It's the version that looks sophisticated: a clean interface, a passing test,
+a confident completion summary, and no actual claim to any of it. Sophisticated slop wears a
+collared shirt. A linter won't catch it. Neither will the green checkmark.
+
+NeatCode installs the judgment of an engineer who has already read the repository, before
+the agent writes and again before it claims to be done.
 
 ## What it is for
 
@@ -24,9 +52,6 @@ that passes against the bug. It says "all tests pass" without running them.
 Each of those is defensible in isolation. Together they are how a codebase becomes
 unmaintainable in six months.
 
-NeatCode installs the judgment of an engineer who has read the repository — before the agent
-writes, and again before it claims to be done.
-
 ---
 
 ## Five verbs
@@ -34,8 +59,8 @@ writes, and again before it claims to be done.
 | Verb | What it does |
 | --- | --- |
 | *(default)* | Implement a change. Orient in the repository, state the contract, choose the structure **before** the syntax, implement the smallest coherent change, then critique the diff before declaring completion. |
-| `neatcode review [source]` | Judge a proposed change — working tree, staged, a commit, a range, a branch, a patch, a pasted diff. Every finding labelled **introduced · worsened · exposed · pre-existing · resolved**. |
-| `neatcode audit <target>` | Judge existing code — a file, a module, a subsystem, the repository. Architecture conformance, authority, boundaries, tests, operational readiness, debt. No edits. |
+| `neatcode review [source]` | Judge a proposed change: working tree, staged, a commit, a range, a branch, a patch, a pasted diff. Every finding labelled **introduced · worsened · exposed · pre-existing · resolved**. |
+| `neatcode audit <target>` | Judge existing code: a file, a module, a subsystem, the repository. Architecture conformance, authority, boundaries, tests, operational readiness, debt. No edits. |
 | `neatcode restructure <target>` | Keep the behaviour, replace the implementation strategy. Characterizes behaviour before changing it. |
 | `neatcode study <target>` | Extract the repository's engineering DNA. Separates **invariants** from **conventions** from **residue**. Optionally writes a portable `engineering.md`. |
 | `neatcode harden <target>` | Take working-on-the-happy-path code to production credibility: idempotency, concurrency, cancellation, recovery, observability, security boundaries, migrations, wiring. |
@@ -71,7 +96,7 @@ neatcode checks                                  # what the repo declares as pro
 ```
 
 The harness **acquires and structures evidence**. It never judges. There is no field in the
-envelope schema meaning "assumed to pass" — that absence is the point.
+envelope schema meaning "assumed to pass," that absence is the point.
 
 ---
 
@@ -79,9 +104,9 @@ envelope schema meaning "assumed to pass" — that absence is the point.
 
 **Two questions**, applied relentlessly:
 
-- **Earnedness** — *what concrete constraint earns this complexity?* "It's more extensible" is
+- **Earnedness**: *what concrete constraint earns this complexity?* "It's more extensible" is
   not a constraint. A second implementation that exists today is.
-- **Evidence** — *what supports the claim that this is correct and complete?* "Tests pass" is a
+- **Evidence**: *what supports the claim that this is correct and complete?* "Tests pass" is a
   claim about a command you ran and an exit code you saw.
 
 **Fourteen failure families**, each entry carrying its definition, signals, underlying
@@ -99,28 +124,37 @@ conformant · **nominal** · contradictory · unverifiable · coherent emergent 
 That last verdict matters: code that has diverged from its README into something coherent is
 not decayed. The documentation is wrong, and that is the cheaper fix.
 
-**Fifty-two pre-completion gates** in eight groups, and a six-axis critique — correctness ·
-repository fit · semantic integrity · restraint · operational credibility · evidence — where
+**Fifty-two pre-completion gates** in eight groups, and a six-axis critique (correctness ·
+repository fit · semantic integrity · restraint · operational credibility · evidence) where
 anything below 3 forces a revision pass.
 
 ---
 
 ## Install
 
+**skills.sh** — works across Claude Code, Cursor, Codex, GitHub Copilot, and more:
+
 ```
 npx skills add GodSpeedAI/NeatCode
 ```
 
-Or copy [`SKILL.md`](skills/neatcode/SKILL.md) + [`references/`](skills/neatcode/references/) into:
+**Claude Code plugin** (community marketplace):
+
+```
+/plugin marketplace add anthropics/claude-plugins-community
+/plugin install @claude-community:neatcode-skill
+```
+
+**Or copy manually** — [`SKILL.md`](skills/neatcode/SKILL.md) + [`references/`](skills/neatcode/references/) into:
 
 - **Claude Code**: `~/.claude/skills/neatcode/`
 - **Cursor**: `.cursor/rules/neatcode.mdc` (body of `SKILL.md`, no frontmatter)
 - **Codex**: `~/.codex/skills/neatcode/` (personal) or `.codex/skills/neatcode/` (project-scoped)
 
-For the harness:
+**The harness** (optional, but recommended):
 
 ```bash
-npm install -g neatcode-skill    # provides the `neatcode` command
+npm install -g @godspeedai/neatcode    # provides the `neatcode` command
 ```
 
 The skill works without it — it falls back to plain `git diff` — but the harness is what makes
@@ -143,9 +177,17 @@ Worked invocations in [`docs/recipes.md`](docs/recipes.md). Worked DNA extractio
 
 ## Design notes
 
-**The intelligence is natural language.** The judgment lives in Markdown — a kernel plus
-progressively-loaded references — not in procedural code. Code acquires and structures
+**The intelligence is natural language.** The judgment lives in Markdown, a kernel plus
+progressively-loaded references, not in procedural code. Code acquires and structures
 evidence; the skill interprets it. That division is deliberate and load-bearing.
+
+**Run it using your strongest model.** The judgment NeatCode asks for, architecture
+conformance, earnedness, whether that `ProviderManager` already has a twin three files
+over, requires holding the actual repository in view, not just the diff in front of you.
+A weaker model will pattern-match against the patch and produce exactly the plausible,
+locally-correct code slop this skill exists to catch. The envelope hands the model the
+context it needs; a small model still won't reason across it the way this requires. This
+is not a place to economize.
 
 **No source-file stamps.** NeatCode never writes marker comments into your codebase. Comment
 stamps are exactly the ceremonial noise it reports as a finding. The record lives in the
@@ -162,10 +204,10 @@ formatting as a finding trains its users to ignore its findings.
 ## Derivation
 
 NeatCode is derived from [Hallmark](https://github.com/Nutlope/hallmark), an anti-AI-slop
-*design* skill by Together AI, released under the MIT License. It keeps Hallmark's architecture
-— a natural-language kernel, progressively-loaded references, verb dispatch, a pre-emit
-critique, and gate-based quality checks — and replaces the subject matter entirely: design
-judgment becomes engineering judgment.
+*design* skill by Together AI, released under the MIT License. It keeps Hallmark's
+architecture: a natural-language kernel, progressively-loaded references, verb dispatch, a
+pre-emit critique, and gate-based quality checks, and replaces the subject matter entirely.
+Design judgment becomes engineering judgment.
 
 Two mechanisms were deliberately **inverted** rather than translated, and the reasoning is
 worth stating because it is the sharpest difference between the two products:
@@ -176,11 +218,6 @@ worth stating because it is the sharpest difference between the two products:
 - **CSS stamps → report blocks.** Hallmark stamps its output. A code skill that wrote marker
   comments into source files would be emitting the exact debt it exists to catch.
 
-The reasoning behind the transformation is preserved in
-[`docs/origin-conversation.md`](docs/origin-conversation.md).
-
-There is **no `hallmark` compatibility alias.** The two skills judge different artifacts;
-routing a design request into a code skill would be worse than a missing command.
 
 ---
 

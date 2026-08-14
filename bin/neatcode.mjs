@@ -7,7 +7,7 @@ import { buildEnvelope, toMarkdown, validateEnvelope } from '../lib/envelope.mjs
 import { discoverChecks } from '../lib/verify.mjs';
 import { repoRoot } from '../lib/git.mjs';
 
-const VERSION = '2.0.0';
+const VERSION = '1.0.0';
 
 const HELP = `neatcode ${VERSION} — change-envelope harness
 

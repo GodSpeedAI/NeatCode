@@ -1,6 +1,6 @@
 {
-  "name": "neatcode-skill",
-  "version": "2.0.0",
+  "name": "@godspeedai/neatcode",
+  "version": "1.0.0",
   "description": "A software-engineering skill for AI coding agents. Reviews diffs, audits repositories, restructures weak implementations, and extracts engineering DNA — so generated code is reasoned, not generated.",
   "keywords": [
     "claude",
@@ -17,9 +17,21 @@
     "anti-ai-slop"
   ],
   "license": "MIT",
+  "author": "GodSpeedAI",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GodSpeedAI/NeatCode.git"
+  },
+  "homepage": "https://github.com/GodSpeedAI/NeatCode#readme",
+  "bugs": {
+    "url": "https://github.com/GodSpeedAI/NeatCode/issues"
+  },
   "type": "module",
   "bin": {
     "neatcode": "bin/neatcode.mjs"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "files": [
     "skills",
