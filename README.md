@@ -142,7 +142,7 @@ npx skills add GodSpeedAI/NeatCode
 
 ```
 /plugin marketplace add anthropics/claude-plugins-community
-/plugin install @claude-community:neatcode-skill
+/plugin install @claude-community:neatcode
 ```
 
 **Or copy manually** — [`SKILL.md`](skills/neatcode/SKILL.md) + [`references/`](skills/neatcode/references/) into:
