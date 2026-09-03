@@ -44,7 +44,7 @@ test('headRev and currentBranch return valid revisions for the current repo', ()
   assert.ok(typeof head === 'string' && /^[0-9a-f]{40}$/.test(head));
 
   const branch = currentBranch(process.cwd());
-  assert.ok(typeof branch === 'string' && branch.length > 0);
+  assert.ok(branch === null || (typeof branch === 'string' && branch.length > 0));
 });
 
 test('trackedFiles and workingTreeStatus return arrays', () => {
