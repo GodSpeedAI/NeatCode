@@ -190,7 +190,7 @@ test('no stale product name survives outside attribution and history', () => {
   ];
   const offenders = [];
   for (const file of files) {
-    const rel = relative(ROOT, file);
+    const rel = relative(ROOT, file).split('\\').join('/');
     if (allowed.has(rel)) continue;
     if (/\.(png|jpe?g|mp4|ico)$/.test(file)) continue;
     if (new RegExp(LEGACY_NAME, 'i').test(readFileSync(file, 'utf8'))) offenders.push(rel);
