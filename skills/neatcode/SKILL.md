@@ -1,7 +1,7 @@
 ---
 name: neatcode
 description: "Software-engineering judgment for AI coding agents. Use when implementing a change, reviewing a diff or pull request, auditing a file/module/repository for technical debt and architectural drift, restructuring a weak implementation, hardening code for production, or extracting a repository's engineering DNA. Invoked by name or via review/audit/restructure/study/harden."
-version: 1.0.1 # x-release-please-version
+version: 1.1.0 # x-release-please-version
 ---
 
 # NeatCode
