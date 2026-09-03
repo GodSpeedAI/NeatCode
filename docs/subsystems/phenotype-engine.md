@@ -1,6 +1,6 @@
 # Subsystem: Architectural Phenotype Engine
 
-The **Architectural Phenotype Engine** is NeatCode's conformance assessment protocol. Documented in [`skills/neatcode/references/architecture/phenotype.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/architecture/phenotype.md) and [`signatures.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/architecture/signatures.md), it compares what a codebase claims about its architecture against what its physical imports and call graphs actually express.
+The **Architectural Phenotype Engine** is NeatCode's conformance assessment protocol. Documented in [`skills/neatcode/references/architecture/phenotype.md`](../../skills/neatcode/references/architecture/phenotype.md) and [`signatures.md`](../../skills/neatcode/references/architecture/signatures.md), it compares what a codebase claims about its architecture against what its physical imports and call graphs actually express.
 
 ---
 
@@ -99,7 +99,7 @@ The agent emits a structured verdict block including the claim, observed facts, 
 
 ## Detecting Nominal Architecture (Cosplay Checks)
 
-NeatCode provides instant grep tests for common nominal patterns ([`phenotype.md:105-117`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/architecture/phenotype.md#L105-L117)):
+NeatCode provides instant grep tests for common nominal patterns ([`phenotype.md:105-117`](../../skills/neatcode/references/architecture/phenotype.md#L105-L117)):
 - **Layered / Clean**: Nominal when `domain/` imports `infra/`.
 - **Hexagonal (Ports & Adapters)**: Nominal when production instantiates concrete adapter classes directly, reserving the interface port only for test stubs.
 - **Event-Driven**: Nominal when events are dispatched synchronously and immediately awaited in the same request thread (a function call wearing an event costume).
@@ -113,6 +113,6 @@ The engine pays special attention to generic folders (`utils/`, `common/`, `shar
 ---
 
 ## Source Trail
-- [`skills/neatcode/references/architecture/phenotype.md:1-149`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/architecture/phenotype.md#L1-L149) — The conformance protocol, checks, and reporting template.
-- [`skills/neatcode/references/architecture/signatures.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/architecture/signatures.md) — Architectural signatures for layered, hexagonal, pipeline, and event architectures.
-- [`lib/repo.mjs:109-115`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/repo.mjs#L109-L115) — Architecture documentation discovery in the harness.
+- [`skills/neatcode/references/architecture/phenotype.md:1-149`](../../skills/neatcode/references/architecture/phenotype.md#L1-L149) — The conformance protocol, checks, and reporting template.
+- [`skills/neatcode/references/architecture/signatures.md`](../../skills/neatcode/references/architecture/signatures.md) — Architectural signatures for layered, hexagonal, pipeline, and event architectures.
+- [`lib/repo.mjs:109-115`](../../lib/repo.mjs#L109-L115) — Architecture documentation discovery in the harness.

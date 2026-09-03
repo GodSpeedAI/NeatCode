@@ -1,6 +1,6 @@
 # Reference: Pre-Completion Gates and Critique Rubric
 
-This document is the formal specification for NeatCode's 52 pre-completion gates and six-axis critique rubric ([`skills/neatcode/references/gates.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/gates.md)).
+This document is the formal specification for NeatCode's 52 pre-completion gates and six-axis critique rubric ([`skills/neatcode/references/gates.md`](../../skills/neatcode/references/gates.md)).
 
 ---
 

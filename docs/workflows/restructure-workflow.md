@@ -68,5 +68,5 @@ Runs the baseline tests. **Every characterization test must pass unchanged.** An
 ---
 
 ## Source Trail
-- [`skills/neatcode/references/verbs/restructure.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/verbs/restructure.md) — Restructure verb protocol.
-- [`skills/neatcode/references/restraint.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/restraint.md) — Earnedness test and removal test.
+- [`skills/neatcode/references/verbs/restructure.md`](../../skills/neatcode/references/verbs/restructure.md) — Restructure verb protocol.
+- [`skills/neatcode/references/restraint.md`](../../skills/neatcode/references/restraint.md) — Earnedness test and removal test.

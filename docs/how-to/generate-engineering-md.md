@@ -12,7 +12,7 @@ Extract the repository's invariants, authority maps, conventions, accepted patte
 ## Prerequisites
 - NeatCode installed (`neatcode` CLI and skill).
 - Clean working tree recommended (`git status` clean).
-- Familiarity with the provenance tagging rules in [`references/engineering-md.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/engineering-md.md).
+- Familiarity with the provenance tagging rules in [`references/engineering-md.md`](../../skills/neatcode/references/engineering-md.md).
 
 ---
 

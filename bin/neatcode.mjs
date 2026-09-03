@@ -7,7 +7,8 @@ import { buildEnvelope, toMarkdown, validateEnvelope } from '../lib/envelope.mjs
 import { discoverChecks } from '../lib/verify.mjs';
 import { repoRoot } from '../lib/git.mjs';
 
-const VERSION = '1.0.0';
+const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+const VERSION = pkg.version;
 
 const HELP = `neatcode ${VERSION} — change-envelope harness
 

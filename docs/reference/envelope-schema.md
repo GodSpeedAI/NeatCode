@@ -148,7 +148,7 @@ The envelope JSON adheres to schema revision `1` and comprises six top-level sec
 
 ## Validation Invariants (`validateEnvelope`)
 
-[`validateEnvelope()`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/envelope.mjs#L118-L159) enforces the following rules:
+[`validateEnvelope()`](../../lib/envelope.mjs#L118-L159) enforces the following rules:
 1. `envelope.neatcode.envelope === 1`.
 2. `envelope.scope.mode` must be in `SCOPE_MODES`.
 3. `envelope.repository.root` must be a non-empty string.

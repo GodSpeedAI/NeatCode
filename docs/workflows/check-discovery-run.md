@@ -43,7 +43,7 @@ sequenceDiagram
 ## Detailed Execution Steps
 
 ### Part 1: Check Discovery (`discoverChecks`)
-Located in [`lib/verify.mjs:56-89`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/verify.mjs#L56-L89):
+Located in [`lib/verify.mjs:56-89`](../../lib/verify.mjs#L56-L89):
 1. **Node.js**: Checks for `package.json`. If present, parses JSON and probes `scripts` for standard targets: `test`, `lint`, `typecheck`, `types`, `check`, `build`, `format`. Discovered scripts are registered as `npm run <name>`.
 2. **Rust**: Checks for `Cargo.toml`. If present, registers `cargo test` and `cargo clippy --all-targets --all-features`.
 3. **Go**: Checks for `go.mod`. If present, registers `go test ./...` and `go vet ./...`.
@@ -51,7 +51,7 @@ Located in [`lib/verify.mjs:56-89`](file:///wsl.localhost/Ubuntu-26.04/home/spri
 5. **Makefile**: Checks for `Makefile`. Probes targets using regex `^(test|lint|check|ci):` and registers `make <target>`.
 
 ### Part 2: Verification Execution (`runCheck`)
-Located in [`lib/verify.mjs:23-46`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/verify.mjs#L23-L46):
+Located in [`lib/verify.mjs:23-46`](../../lib/verify.mjs#L23-L46):
 1. Marks start timestamp `started = Date.now()`.
 2. Calls `child_process.spawnSync(command, { cwd, shell: true, timeout: 900_000, maxBuffer: 32MB })`.
    - *Security Note*: `shell: true` is deliberate here because verification command strings are provided directly by the human operator, not interpolated from repository contents.
@@ -72,13 +72,13 @@ Located in [`lib/verify.mjs:23-46`](file:///wsl.localhost/Ubuntu-26.04/home/spri
 ---
 
 ## Failure Branches
-- **Manifest Syntax Error**: Malformed `package.json` JSON is safely swallowed with `try/catch` without crashing discovery ([`lib/verify.mjs:67`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/verify.mjs#L67)).
+- **Manifest Syntax Error**: Malformed `package.json` JSON is safely swallowed with `try/catch` without crashing discovery ([`lib/verify.mjs:67`](../../lib/verify.mjs#L67)).
 - **Subprocess Timeout**: Execution exceeding 15 minutes is terminated cleanly and recorded as `timeout`.
 
 ---
 
 ## Source Trail
-- [`lib/verify.mjs:10-16`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/verify.mjs#L10-L16) — `condense()` log formatter.
-- [`lib/verify.mjs:23-46`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/verify.mjs#L23-L46) — `runCheck()` execution controller.
-- [`lib/verify.mjs:56-89`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/verify.mjs#L56-L89) — `discoverChecks()` manifest probe.
-- [`bin/neatcode.mjs:120-129`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/bin/neatcode.mjs#L120-L129) — CLI `checks` command handler.
+- [`lib/verify.mjs:10-16`](../../lib/verify.mjs#L10-L16) — `condense()` log formatter.
+- [`lib/verify.mjs:23-46`](../../lib/verify.mjs#L23-L46) — `runCheck()` execution controller.
+- [`lib/verify.mjs:56-89`](../../lib/verify.mjs#L56-L89) — `discoverChecks()` manifest probe.
+- [`bin/neatcode.mjs:120-129`](../../bin/neatcode.mjs#L120-L129) — CLI `checks` command handler.

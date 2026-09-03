@@ -1,6 +1,6 @@
 # How-To: Add a Verification Source to Check Discovery
 
-This guide explains how to extend `neatcode checks` and the change envelope's verification discovery engine in [`lib/verify.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/verify.mjs) to automatically detect proof commands for a new language, build tool, or framework.
+This guide explains how to extend `neatcode checks` and the change envelope's verification discovery engine in [`lib/verify.mjs`](../../lib/verify.mjs) to automatically detect proof commands for a new language, build tool, or framework.
 
 ---
 
@@ -18,7 +18,7 @@ Enable NeatCode to inspect a repository's manifests (e.g. `gradle.build`, `mix.e
 ## Procedure
 
 ### Step 1: Open `lib/verify.mjs`
-Locate [`discoverChecks(root)`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/verify.mjs#L56-L89):
+Locate [`discoverChecks(root)`](../../lib/verify.mjs#L56-L89):
 
 ```javascript
 export function discoverChecks(root) {
@@ -44,7 +44,7 @@ Add an `existsSync` check and parse the manifest if necessary. Always wrap file 
 ```
 
 ### Step 3: Register Manifest in `lib/repo.mjs`
-Ensure that the manifest filename is also listed in `MANIFESTS` in [`lib/repo.mjs:10-15`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/repo.mjs#L10-L15):
+Ensure that the manifest filename is also listed in `MANIFESTS` in [`lib/repo.mjs:10-15`](../../lib/repo.mjs#L10-L15):
 ```javascript
 const MANIFESTS = [
   'package.json', 'deno.json', 'deno.jsonc', 'jsr.json',

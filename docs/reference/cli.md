@@ -97,6 +97,6 @@ neatcode checks
 ---
 
 ## Source Trail
-- [`bin/neatcode.mjs:1-157`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/bin/neatcode.mjs#L1-L157) — Command-line interface source implementation.
-- [`lib/envelope.mjs:19-21`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/envelope.mjs#L19-L21) — Permitted scope modes (`SCOPE_MODES`).
-- [`test/envelope.test.mjs:159-181`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/test/envelope.test.mjs#L159-L181) — Automated CLI invocation test specs.
+- [`bin/neatcode.mjs:1-157`](../../bin/neatcode.mjs#L1-L157) — Command-line interface source implementation.
+- [`lib/envelope.mjs:19-21`](../../lib/envelope.mjs#L19-L21) — Permitted scope modes (`SCOPE_MODES`).
+- [`test/envelope.test.mjs:159-181`](../../test/envelope.test.mjs#L159-L181) — Automated CLI invocation test specs.

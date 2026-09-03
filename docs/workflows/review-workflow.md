@@ -54,7 +54,7 @@ sequenceDiagram
 - **Evidence**: Checks whether added tests fail without the patch, or whether assertions are tautological.
 
 ### 3. Load Failure Taxonomy Families
-For agent-authored patches, the reviewer always loads [`taxonomy/epistemic.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/epistemic.md) and [`taxonomy/context.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/context.md) to detect invented APIs and duplicated utilities.
+For agent-authored patches, the reviewer always loads [`taxonomy/epistemic.md`](../../skills/neatcode/references/taxonomy/epistemic.md) and [`taxonomy/context.md`](../../skills/neatcode/references/taxonomy/context.md) to detect invented APIs and duplicated utilities.
 
 ### 4. Assign Provenance
 Every defect is labeled to guarantee fairness:
@@ -66,11 +66,11 @@ Every defect is labeled to guarantee fairness:
 - `resolved`: Existing defect fixed by this patch.
 
 ### 5. Gate Audit & Critique
-Runs the pre-completion gates from [`references/gates.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/gates.md), evaluates the six critique axes (correctness, repository fit, semantic integrity, restraint, operational credibility, evidence), and emits the standardized review block.
+Runs the pre-completion gates from [`references/gates.md`](../../skills/neatcode/references/gates.md), evaluates the six critique axes (correctness, repository fit, semantic integrity, restraint, operational credibility, evidence), and emits the standardized review block.
 
 ---
 
 ## Source Trail
-- [`skills/neatcode/references/verbs/review.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/verbs/review.md) — Review verb specification.
-- [`skills/neatcode/references/reasoning.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/reasoning.md) — Five-step reasoning protocol.
-- [`skills/neatcode/references/findings.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/findings.md) — Severity and provenance rules.
+- [`skills/neatcode/references/verbs/review.md`](../../skills/neatcode/references/verbs/review.md) — Review verb specification.
+- [`skills/neatcode/references/reasoning.md`](../../skills/neatcode/references/reasoning.md) — Five-step reasoning protocol.
+- [`skills/neatcode/references/findings.md`](../../skills/neatcode/references/findings.md) — Severity and provenance rules.

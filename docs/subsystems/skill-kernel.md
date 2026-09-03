@@ -1,6 +1,6 @@
 # Subsystem: Skill Kernel
 
-The **Skill Kernel** is the natural-language reasoning foundation of NeatCode. Defined in [`skills/neatcode/SKILL.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/SKILL.md), it governs how an AI coding assistant (Claude Code, Cursor, Codex) investigates context, exercises restraint, reasons through changes, and critiques work before declaring completion.
+The **Skill Kernel** is the natural-language reasoning foundation of NeatCode. Defined in [`skills/neatcode/SKILL.md`](../../skills/neatcode/SKILL.md), it governs how an AI coding assistant (Claude Code, Cursor, Codex) investigates context, exercises restraint, reasons through changes, and critiques work before declaring completion.
 
 ---
 
@@ -53,13 +53,13 @@ graph TD
 ## Core Abstractions
 
 ### 1. The Depth Ladder
-Establishes proportionate scrutiny before starting work ([`SKILL.md:114-129`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/SKILL.md#L114-L129)):
+Establishes proportionate scrutiny before starting work ([`SKILL.md:114-129`](../../skills/neatcode/SKILL.md#L114-L129)):
 - **`Trace`**: $\le 1$ file, no behavior change, no state, no auth. Mental gate pass; 2–4 line summary.
 - **`Standard`**: Default. Ordinary feature work. Full reasoning sequence, gates, and 6-axis critique.
 - **`Deep`**: Public APIs, migrations, concurrency, auth, money, data integrity, cross-module changes, or $\ge 8$ files. Standard plus architectural phenotype conformance and explicit invariant tracing.
 
 ### 2. The 5-Step Reasoning Sequence
-Walked on every verb ([`references/reasoning.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/reasoning.md)):
+Walked on every verb ([`references/reasoning.md`](../../skills/neatcode/references/reasoning.md)):
 1. **Intent**: Problem statement, acceptance criteria, non-goals, and task alignment.
 2. **Surface**: Directory dispersion, file kinds, public APIs, dependencies, and size outliers.
 3. **Structure**: Canonical implementation path, authority mapping, dependency direction, earnedness.
@@ -70,21 +70,21 @@ Walked on every verb ([`references/reasoning.md`](file:///wsl.localhost/Ubuntu-2
 Prevents post-hoc rationalization by enforcing discipline *before* syntax is emitted:
 - **Step 0: Orient**: Reads `engineering.md`, repository instructions (`AGENTS.md`), manifests, and locates the canonical path.
 - **Step 1: Contract**: Restates required and preserved behavior in $\le 5$ lines.
-- **Step 2: Archetype**: Categorizes the change into one of 11 archetypes ([`references/archetypes.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/archetypes.md)).
-- **Step 3: Profile**: Inherits one of 7 engineering profiles from surrounding code ([`references/profiles.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/profiles.md)).
+- **Step 2: Archetype**: Categorizes the change into one of 11 archetypes ([`references/archetypes.md`](../../skills/neatcode/references/archetypes.md)).
+- **Step 3: Profile**: Inherits one of 7 engineering profiles from surrounding code ([`references/profiles.md`](../../skills/neatcode/references/profiles.md)).
 - **Step 4: Structure before Syntax**: Names canonical owner, state guarantees, and earning constraints.
 - **Step 5: Plan**: Emits a compact plan block for user review.
 - **Step 6: Implement**: Smallest coherent change, matching local idioms, wiring end-to-end.
 - **Step 7: Verify**: Executes repository-declared proof commands; verifies regression testability.
-- **Step 8: Critique before Completion**: Loads [`references/gates.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/gates.md), evaluates 52 gates, scores the 6 critique axes, and emits the completion block.
+- **Step 8: Critique before Completion**: Loads [`references/gates.md`](../../skills/neatcode/references/gates.md), evaluates 52 gates, scores the 6 critique axes, and emits the completion block.
 
 ---
 
 ## Progressive Reference Loading Engine
-To avoid saturating the LLM context window with thousands of lines of rules, references are loaded conditionally ([`SKILL.md:409-456`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/SKILL.md#L409-L456)):
-- **Always loaded**: [`restraint.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/restraint.md) and [`taxonomy.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy.md) (the slim routing index).
+To avoid saturating the LLM context window with thousands of lines of rules, references are loaded conditionally ([`SKILL.md:409-456`](../../skills/neatcode/SKILL.md#L409-L456)):
+- **Always loaded**: [`restraint.md`](../../skills/neatcode/references/restraint.md) and [`taxonomy.md`](../../skills/neatcode/references/taxonomy.md) (the slim routing index).
 - **Loaded selectively**: The agent reads the taxonomy index and opens only the 2–4 family files implicated by the task (e.g. `taxonomy/security.md` for auth paths).
-- **Post-implementation only**: [`gates.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/gates.md) is loaded exclusively at Step 8 so it acts as an honest audit rather than an in-generation checklist.
+- **Post-implementation only**: [`gates.md`](../../skills/neatcode/references/gates.md) is loaded exclusively at Step 8 so it acts as an honest audit rather than an in-generation checklist.
 
 ---
 
@@ -96,7 +96,7 @@ The skill kernel maintains no persistent filesystem state except when explicitly
 ## Failure Modes
 - **Sycophantic Scoring**: Agents inflating critique scores to 5/5. Mitigated by explicit gate checklist and revision enforcement for scores $<3$.
 - **Over-eager Reference Loading**: Agents reading all 14 taxonomy families simultaneously. Mitigated by the routing table in `SKILL.md`.
-- **Instruction Injection via Repository Content**: Malicious repository comments attempting to steer the agent. Mitigated by [`references/untrusted-input.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/untrusted-input.md).
+- **Instruction Injection via Repository Content**: Malicious repository comments attempting to steer the agent. Mitigated by [`references/untrusted-input.md`](../../skills/neatcode/references/untrusted-input.md).
 
 ---
 
@@ -107,8 +107,8 @@ The skill kernel maintains no persistent filesystem state except when explicitly
 ---
 
 ## Source Trail
-- [`skills/neatcode/SKILL.md:1-532`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/SKILL.md#L1-L532) — Main skill definition, disciplines, and execution lifecycle.
-- [`skills/neatcode/references/restraint.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/restraint.md) — The earnedness test and complexity budget.
-- [`skills/neatcode/references/evidence.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/evidence.md) — The three states of evidence and verification standards.
-- [`skills/neatcode/references/gates.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/gates.md) — The 52 pre-completion gates and six critique axes.
-- [`test/skill-integrity.test.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/test/skill-integrity.test.mjs) — Integrity test asserting reachability of all reference files.
+- [`skills/neatcode/SKILL.md:1-532`](../../skills/neatcode/SKILL.md#L1-L532) — Main skill definition, disciplines, and execution lifecycle.
+- [`skills/neatcode/references/restraint.md`](../../skills/neatcode/references/restraint.md) — The earnedness test and complexity budget.
+- [`skills/neatcode/references/evidence.md`](../../skills/neatcode/references/evidence.md) — The three states of evidence and verification standards.
+- [`skills/neatcode/references/gates.md`](../../skills/neatcode/references/gates.md) — The 52 pre-completion gates and six critique axes.
+- [`test/skill-integrity.test.mjs`](../../test/skill-integrity.test.mjs) — Integrity test asserting reachability of all reference files.

@@ -1,6 +1,6 @@
 # Subsystem: Taxonomy and Gate Engine
 
-The **Taxonomy and Gate Engine** provides NeatCode's formal quality ontology, failure pattern catalog, and pre-completion evaluation checklist. It comprises the 14 failure taxonomy families ([`skills/neatcode/references/taxonomy/`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/)), the finding provenance model ([`findings.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/findings.md)), and the 52 pre-completion gates ([`gates.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/gates.md)).
+The **Taxonomy and Gate Engine** provides NeatCode's formal quality ontology, failure pattern catalog, and pre-completion evaluation checklist. It comprises the 14 failure taxonomy families ([`skills/neatcode/references/taxonomy/`](../../skills/neatcode/references/taxonomy)), the finding provenance model ([`findings.md`](../../skills/neatcode/references/findings.md)), and the 52 pre-completion gates ([`gates.md`](../../skills/neatcode/references/gates.md)).
 
 ---
 
@@ -48,26 +48,26 @@ Every failure mode in NeatCode derives from two parent principles: **Earnedness*
 
 | Family | Core Risk | Typical Signal | Reference File |
 | :--- | :--- | :--- | :--- |
-| **Epistemic** | Coding through uncertainty; inventing APIs | Assuming library version; unconfirmed method call | [`taxonomy/epistemic.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/epistemic.md) |
-| **Context** | Locally plausible, globally wrong | Re-implementing existing utility 3 files away | [`taxonomy/context.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/context.md) |
-| **Contract** | Inadvertent behavior or interface break | Silently altering error semantics; dropping invariants | [`taxonomy/contract.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/contract.md) |
-| **Completion** | Unfinished work masquerading as done | `TODO`, empty branch, unread config option | [`taxonomy/completion.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/completion.md) |
-| **Abstraction** | Unearned indirection & complexity tax | Interface with 1 implementation; pass-through class | [`taxonomy/abstraction.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/abstraction.md) |
-| **Authority** | Fragmented ownership of state/rules | Multiple functions updating status directly | [`taxonomy/authority.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/authority.md) |
-| **Boundary** | Layer violation & foreign type leakage | Domain importing ORM/HTTP library types | [`taxonomy/boundary.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/boundary.md) |
-| **State & Concurrency** | Race conditions & non-atomic mutations | Non-idempotent retry; check-then-act race | [`taxonomy/state-and-concurrency.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/state-and-concurrency.md) |
-| **Failure Handling** | Swallowed errors & silent degradation | Empty `catch` block; misleading default return | [`taxonomy/failure-handling.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/failure-handling.md) |
-| **Tests** | False confidence & tautological checks | Test asserting mock behavior; missing failure test | [`taxonomy/tests.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/tests.md) |
-| **Observability** | Blind production operations | Failure path emitting no log or correlation ID | [`taxonomy/observability.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/observability.md) |
-| **Security** | Vulnerability exposure across boundaries | Unvalidated input passed to query or shell | [`taxonomy/security.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/security.md) |
-| **Change Discipline** | Scope creep & unreviewable diffs | Reformatting untouched files; bundled refactor | [`taxonomy/change-discipline.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/change-discipline.md) |
-| **Maintainability Theater** | Ceremony over substance | Comment restating code; taxonomic naming sprawl | [`taxonomy/maintainability-theater.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/maintainability-theater.md) |
+| **Epistemic** | Coding through uncertainty; inventing APIs | Assuming library version; unconfirmed method call | [`taxonomy/epistemic.md`](../../skills/neatcode/references/taxonomy/epistemic.md) |
+| **Context** | Locally plausible, globally wrong | Re-implementing existing utility 3 files away | [`taxonomy/context.md`](../../skills/neatcode/references/taxonomy/context.md) |
+| **Contract** | Inadvertent behavior or interface break | Silently altering error semantics; dropping invariants | [`taxonomy/contract.md`](../../skills/neatcode/references/taxonomy/contract.md) |
+| **Completion** | Unfinished work masquerading as done | `TODO`, empty branch, unread config option | [`taxonomy/completion.md`](../../skills/neatcode/references/taxonomy/completion.md) |
+| **Abstraction** | Unearned indirection & complexity tax | Interface with 1 implementation; pass-through class | [`taxonomy/abstraction.md`](../../skills/neatcode/references/taxonomy/abstraction.md) |
+| **Authority** | Fragmented ownership of state/rules | Multiple functions updating status directly | [`taxonomy/authority.md`](../../skills/neatcode/references/taxonomy/authority.md) |
+| **Boundary** | Layer violation & foreign type leakage | Domain importing ORM/HTTP library types | [`taxonomy/boundary.md`](../../skills/neatcode/references/taxonomy/boundary.md) |
+| **State & Concurrency** | Race conditions & non-atomic mutations | Non-idempotent retry; check-then-act race | [`taxonomy/state-and-concurrency.md`](../../skills/neatcode/references/taxonomy/state-and-concurrency.md) |
+| **Failure Handling** | Swallowed errors & silent degradation | Empty `catch` block; misleading default return | [`taxonomy/failure-handling.md`](../../skills/neatcode/references/taxonomy/failure-handling.md) |
+| **Tests** | False confidence & tautological checks | Test asserting mock behavior; missing failure test | [`taxonomy/tests.md`](../../skills/neatcode/references/taxonomy/tests.md) |
+| **Observability** | Blind production operations | Failure path emitting no log or correlation ID | [`taxonomy/observability.md`](../../skills/neatcode/references/taxonomy/observability.md) |
+| **Security** | Vulnerability exposure across boundaries | Unvalidated input passed to query or shell | [`taxonomy/security.md`](../../skills/neatcode/references/taxonomy/security.md) |
+| **Change Discipline** | Scope creep & unreviewable diffs | Reformatting untouched files; bundled refactor | [`taxonomy/change-discipline.md`](../../skills/neatcode/references/taxonomy/change-discipline.md) |
+| **Maintainability Theater** | Ceremony over substance | Comment restating code; taxonomic naming sprawl | [`taxonomy/maintainability-theater.md`](../../skills/neatcode/references/taxonomy/maintainability-theater.md) |
 
 ---
 
 ## The 52 Pre-Completion Gates
 
-Loaded and evaluated strictly at **Step 8** of the implementation flow ([`references/gates.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/gates.md)). Every question requires an honest `no`:
+Loaded and evaluated strictly at **Step 8** of the implementation flow ([`references/gates.md`](../../skills/neatcode/references/gates.md)). Every question requires an honest `no`:
 
 - **Group A: Epistemic Integrity** (Gates 1–6): Unconfirmed APIs, assumed versions, fabricated atomicity guarantees, uncertainty rationalized by comments.
 - **Group B: Behavioural Contract** (Gates 7–13): Unintended behavioral drift, dropped invariants, unhandled edge conditions, altered error semantics.
@@ -96,8 +96,8 @@ Following the gate pass, the agent scores the change 1–5 on six standardized a
 ---
 
 ## Source Trail
-- [`skills/neatcode/references/taxonomy.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy.md) — Index and fast-routing lookup table.
-- [`skills/neatcode/references/taxonomy/*.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy/) — 14 detailed family reference specifications.
-- [`skills/neatcode/references/findings.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/findings.md) — Severity, confidence, and provenance schema.
-- [`skills/neatcode/references/gates.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/gates.md) — 52 pre-completion gates and six critique axes.
-- [`test/skill-integrity.test.mjs:240-257`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/test/skill-integrity.test.mjs#L240-L257) — Tests enforcing identical phrasing of critique axes and provenance labels.
+- [`skills/neatcode/references/taxonomy.md`](../../skills/neatcode/references/taxonomy.md) — Index and fast-routing lookup table.
+- [`skills/neatcode/references/taxonomy/*.md`](../../skills/neatcode/references/taxonomy) — 14 detailed family reference specifications.
+- [`skills/neatcode/references/findings.md`](../../skills/neatcode/references/findings.md) — Severity, confidence, and provenance schema.
+- [`skills/neatcode/references/gates.md`](../../skills/neatcode/references/gates.md) — 52 pre-completion gates and six critique axes.
+- [`test/skill-integrity.test.mjs:240-257`](../../test/skill-integrity.test.mjs#L240-L257) — Tests enforcing identical phrasing of critique axes and provenance labels.

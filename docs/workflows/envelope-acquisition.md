@@ -91,8 +91,8 @@ sequenceDiagram
 ---
 
 ## Source Trail
-- [`bin/neatcode.mjs:138-155`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/bin/neatcode.mjs#L138-L155) — Execution dispatch.
-- [`lib/envelope.mjs:33-112`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/envelope.mjs#L33-L112) — Main `buildEnvelope` algorithm.
-- [`lib/git.mjs:64-103`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/git.mjs#L64-L103) — Git diff acquisition.
-- [`lib/diff.mjs:57-139`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/diff.mjs#L57-L139) — Unified diff parser.
-- [`lib/context.mjs:110-127`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs#L110-L127) — Bounded context expansion.
+- [`bin/neatcode.mjs:138-155`](../../bin/neatcode.mjs#L138-L155) — Execution dispatch.
+- [`lib/envelope.mjs:33-112`](../../lib/envelope.mjs#L33-L112) — Main `buildEnvelope` algorithm.
+- [`lib/git.mjs:64-103`](../../lib/git.mjs#L64-L103) — Git diff acquisition.
+- [`lib/diff.mjs:57-139`](../../lib/diff.mjs#L57-L139) — Unified diff parser.
+- [`lib/context.mjs:110-127`](../../lib/context.mjs#L110-L127) — Bounded context expansion.

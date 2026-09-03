@@ -19,8 +19,8 @@ The CLI exists to provide a zero-dependency, deterministic terminal interface fo
 
 ## Non-Responsibilities
 - **Does not judge code quality**: Contains no rules determining whether a change is good or bad.
-- **Does not perform Git operations directly**: Delegates all subprocess execution to [`lib/git.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/git.mjs).
-- **Does not parse diffs**: Delegates diff tokenization to [`lib/diff.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/diff.mjs).
+- **Does not perform Git operations directly**: Delegates all subprocess execution to [`lib/git.mjs`](../../lib/git.mjs).
+- **Does not parse diffs**: Delegates diff tokenization to [`lib/diff.mjs`](../../lib/diff.mjs).
 
 ---
 
@@ -41,7 +41,7 @@ graph TD
 ## Core Abstractions
 
 ### `parseArgs(argv)`
-A custom, zero-dependency command-line argument tokenizer located at [`bin/neatcode.mjs:44-86`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/bin/neatcode.mjs#L44-L86). It processes argv arrays sequentially and populates an options dictionary:
+A custom, zero-dependency command-line argument tokenizer located at [`bin/neatcode.mjs:44-86`](../../bin/neatcode.mjs#L44-L86). It processes argv arrays sequentially and populates an options dictionary:
 ```javascript
 const opts = {
   command: null,                       // 'envelope' | 'checks'
@@ -93,13 +93,13 @@ The CLI subsystem is strictly **stateless**. It reads the local filesystem and e
 ---
 
 ## Extension Points
-- **New CLI Flags**: Add flag cases in [`bin/neatcode.mjs:58-84`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/bin/neatcode.mjs#L58-L84).
-- **New Output Formats**: Extend serialization logic in [`bin/neatcode.mjs:149`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/bin/neatcode.mjs#L149).
+- **New CLI Flags**: Add flag cases in [`bin/neatcode.mjs:58-84`](../../bin/neatcode.mjs#L58-L84).
+- **New Output Formats**: Extend serialization logic in [`bin/neatcode.mjs:149`](../../bin/neatcode.mjs#L149).
 
 ---
 
 ## Source Trail
-- [`bin/neatcode.mjs:10-42`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/bin/neatcode.mjs#L10-L42) — CLI version and help documentation constants.
-- [`bin/neatcode.mjs:44-86`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/bin/neatcode.mjs#L44-L86) — `parseArgs()` implementation.
-- [`bin/neatcode.mjs:101-155`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/bin/neatcode.mjs#L101-L155) — `main()` execution coordinator.
-- [`test/envelope.test.mjs:159-181`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/test/envelope.test.mjs#L159-L181) — CLI integration test specs.
+- [`bin/neatcode.mjs:10-42`](../../bin/neatcode.mjs#L10-L42) — CLI version and help documentation constants.
+- [`bin/neatcode.mjs:44-86`](../../bin/neatcode.mjs#L44-L86) — `parseArgs()` implementation.
+- [`bin/neatcode.mjs:101-155`](../../bin/neatcode.mjs#L101-L155) — `main()` execution coordinator.
+- [`test/envelope.test.mjs:159-181`](../../test/envelope.test.mjs#L159-L181) — CLI integration test specs.

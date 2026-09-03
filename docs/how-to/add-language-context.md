@@ -1,6 +1,6 @@
 # How-To: Add a Language to Context Expansion
 
-This guide explains how to extend NeatCode's bounded context expansion engine in [`lib/context.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs) to support local import resolution and caller discovery for a new programming language.
+This guide explains how to extend NeatCode's bounded context expansion engine in [`lib/context.mjs`](../../lib/context.mjs) to support local import resolution and caller discovery for a new programming language.
 
 ---
 
@@ -19,7 +19,7 @@ Enable `neatcode envelope` to recognize and resolve local dependencies, callers,
 ## Procedure
 
 ### Step 1: Register Source File Extensions
-Open [`lib/context.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs) and locate `SOURCE_EXTENSIONS` around line 25:
+Open [`lib/context.mjs`](../../lib/context.mjs) and locate `SOURCE_EXTENSIONS` around line 25:
 
 ```javascript
 const SOURCE_EXTENSIONS = new Set([
@@ -28,10 +28,10 @@ const SOURCE_EXTENSIONS = new Set([
 ]);
 ```
 
-If your language's extension (e.g., `.clj`, `.zig`, or `.dart`) is missing, add it to the `Set`. This ensures that [`likelyCallers()`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs#L79) will scan files with this extension.
+If your language's extension (e.g., `.clj`, `.zig`, or `.dart`) is missing, add it to the `Set`. This ensures that [`likelyCallers()`](../../lib/context.mjs#L79) will scan files with this extension.
 
 ### Step 2: Add Regex Import Patterns
-In [`lib/context.mjs:15-23`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs#L15-L23), locate `IMPORT_PATTERNS`. Add a regular expression that captures the relative local path string in capturing group `1`:
+In [`lib/context.mjs:15-23`](../../lib/context.mjs#L15-L23), locate `IMPORT_PATTERNS`. Add a regular expression that captures the relative local path string in capturing group `1`:
 
 ```javascript
 const IMPORT_PATTERNS = [
@@ -44,7 +44,7 @@ const IMPORT_PATTERNS = [
 ```
 
 ### Step 3: Configure Candidate Path Expansions
-In [`lib/context.mjs:64-73`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs#L64-L73), locate `candidatePaths()`:
+In [`lib/context.mjs:64-73`](../../lib/context.mjs#L64-L73), locate `candidatePaths()`:
 ```javascript
 function candidatePaths(fromDir, spec) {
   const base = join(fromDir, spec).split('\\').join('/');

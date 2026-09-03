@@ -63,6 +63,6 @@ Outputs the 11 study deliverables (claims, implied conventions, structural patte
 ---
 
 ## Source Trail
-- [`skills/neatcode/references/verbs/study.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/verbs/study.md) — Study verb specification.
-- [`skills/neatcode/references/engineering-md.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/engineering-md.md) — Portable engineering profile specification.
-- [`docs/study-examples.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/docs/study-examples.md) — Worked study extractions.
+- [`skills/neatcode/references/verbs/study.md`](../../skills/neatcode/references/verbs/study.md) — Study verb specification.
+- [`skills/neatcode/references/engineering-md.md`](../../skills/neatcode/references/engineering-md.md) — Portable engineering profile specification.
+- [`docs/study-examples.md`](../study-examples.md) — Worked study extractions.

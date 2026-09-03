@@ -9,7 +9,7 @@ This document explains the technical rationale, constraints, and trade-offs behi
 ## The Principle: Practice What You Preach
 
 NeatCode's core quality rule is **Restraint**:
-> *"What concrete constraint earns this complexity?"* ([`references/restraint.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/restraint.md))
+> *"What concrete constraint earns this complexity?"* ([`references/restraint.md`](../../skills/neatcode/references/restraint.md))
 
 A tool that instructs software engineers to reject unearned dependencies, avoid bloated wrappers, and audit external supply chains cannot reasonably ship with 400 transitively-installed npm packages to parse a unified diff. 
 

@@ -58,5 +58,5 @@ sequenceDiagram
 ---
 
 ## Source Trail
-- [`skills/neatcode/references/verbs/audit.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/verbs/audit.md) — Audit verb specification.
-- [`skills/neatcode/references/architecture/phenotype.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/architecture/phenotype.md) — Conformance protocol.
+- [`skills/neatcode/references/verbs/audit.md`](../../skills/neatcode/references/verbs/audit.md) — Audit verb specification.
+- [`skills/neatcode/references/architecture/phenotype.md`](../../skills/neatcode/references/architecture/phenotype.md) — Conformance protocol.

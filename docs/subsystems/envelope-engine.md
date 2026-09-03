@@ -44,7 +44,7 @@ graph TD
 ## Core Abstractions
 
 ### `buildEnvelope(options)`
-Located in [`lib/envelope.mjs:33-112`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/envelope.mjs#L33-L112). Coordinates the entire acquisition flow:
+Located in [`lib/envelope.mjs:33-112`](../../lib/envelope.mjs#L33-L112). Coordinates the entire acquisition flow:
 ```javascript
 export function buildEnvelope(options = {}) {
   // 1. Resolve repository root
@@ -58,7 +58,7 @@ export function buildEnvelope(options = {}) {
 ```
 
 ### `validateEnvelope(envelope)`
-Located in [`lib/envelope.mjs:118-159`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/envelope.mjs#L118-L159). The deterministic guard rail verifying envelope well-formedness:
+Located in [`lib/envelope.mjs:118-159`](../../lib/envelope.mjs#L118-L159). The deterministic guard rail verifying envelope well-formedness:
 - Asserts `envelope.neatcode.envelope === 1`.
 - Validates scope modes against `SCOPE_MODES`.
 - Confirms non-empty `repository.root`.
@@ -67,7 +67,7 @@ Located in [`lib/envelope.mjs:118-159`](file:///wsl.localhost/Ubuntu-26.04/home/
 - Checks status validity of verification runs (`passed`, `failed`, `timeout`, `not-run`).
 
 ### Path Classification (`classifyPath(path)`)
-Located in [`lib/diff.mjs:22-29`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/diff.mjs#L22-L29). Classifies paths into six functional kinds:
+Located in [`lib/diff.mjs:22-29`](../../lib/diff.mjs#L22-L29). Classifies paths into six functional kinds:
 - `generated`: Lockfiles, vendor directories, minified bundles, protobuf outputs.
 - `test`: Files matching `test/`, `spec/`, `_test.go`, `test_*.py`, etc.
 - `asset`: Binary media, images, fonts, archives.
@@ -80,11 +80,11 @@ Located in [`lib/diff.mjs:22-29`](file:///wsl.localhost/Ubuntu-26.04/home/sprime
 ## Internal Operation
 
 ### Bounded Context Ring Walk (`expandContext`)
-Located in [`lib/context.mjs:110-127`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs#L110-L127). For each non-generated path in the diff:
-1. **Owning Package**: Climbs directories upward looking for the nearest manifest (`package.json`, `Cargo.toml`, etc.) via [`owningPackage()`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/repo.mjs#L129-L142).
-2. **Local Imports**: Regex-scans import statements (`import ... from './...'`, `require()`, `from . import`, `use crate::`) and resolves targets against tracked repository files via [`localImports()`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs#L40-L62).
-3. **Discoverable Callers**: Searches tracked source files for occurrences of the module's basename stem via [`likelyCallers()`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs#L79-L93).
-4. **Related Tests**: Locates test files sharing the module's stem via [`relatedTests()`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs#L96-L104).
+Located in [`lib/context.mjs:110-127`](../../lib/context.mjs#L110-L127). For each non-generated path in the diff:
+1. **Owning Package**: Climbs directories upward looking for the nearest manifest (`package.json`, `Cargo.toml`, etc.) via [`owningPackage()`](../../lib/repo.mjs#L129-L142).
+2. **Local Imports**: Regex-scans import statements (`import ... from './...'`, `require()`, `from . import`, `use crate::`) and resolves targets against tracked repository files via [`localImports()`](../../lib/context.mjs#L40-L62).
+3. **Discoverable Callers**: Searches tracked source files for occurrences of the module's basename stem via [`likelyCallers()`](../../lib/context.mjs#L79-L93).
+4. **Related Tests**: Locates test files sharing the module's stem via [`relatedTests()`](../../lib/context.mjs#L96-L104).
 
 ---
 
@@ -101,16 +101,16 @@ The engine is stateless. It reads working tree state and temporary Git stdout bu
 ---
 
 ## Extension Points
-- **New Manifest Types**: Add manifest filenames to `MANIFESTS` in [`lib/repo.mjs:10-15`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/repo.mjs#L10-L15).
-- **New Ecosystem Import Syntax**: Add regex patterns to `IMPORT_PATTERNS` in [`lib/context.mjs:15-23`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs#L15-L23).
-- **New Check Sources**: Add manifest inspection logic to `discoverChecks` in [`lib/verify.mjs:56-89`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/verify.mjs#L56-L89).
+- **New Manifest Types**: Add manifest filenames to `MANIFESTS` in [`lib/repo.mjs:10-15`](../../lib/repo.mjs#L10-L15).
+- **New Ecosystem Import Syntax**: Add regex patterns to `IMPORT_PATTERNS` in [`lib/context.mjs:15-23`](../../lib/context.mjs#L15-L23).
+- **New Check Sources**: Add manifest inspection logic to `discoverChecks` in [`lib/verify.mjs:56-89`](../../lib/verify.mjs#L56-L89).
 
 ---
 
 ## Source Trail
-- [`lib/envelope.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/envelope.mjs) — Envelope builder, validator, and Markdown renderer.
-- [`lib/git.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/git.mjs) — Git execution wrappers and revision resolution.
-- [`lib/diff.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/diff.mjs) — Diff parser and change surface summarizer.
-- [`lib/repo.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/repo.mjs) — Repository morphology, manifests, instructions, and workspace detection.
-- [`lib/context.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs) — Bounded context ring resolution.
-- [`lib/verify.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/verify.mjs) — Verification runner and command discovery.
+- [`lib/envelope.mjs`](../../lib/envelope.mjs) — Envelope builder, validator, and Markdown renderer.
+- [`lib/git.mjs`](../../lib/git.mjs) — Git execution wrappers and revision resolution.
+- [`lib/diff.mjs`](../../lib/diff.mjs) — Diff parser and change surface summarizer.
+- [`lib/repo.mjs`](../../lib/repo.mjs) — Repository morphology, manifests, instructions, and workspace detection.
+- [`lib/context.mjs`](../../lib/context.mjs) — Bounded context ring resolution.
+- [`lib/verify.mjs`](../../lib/verify.mjs) — Verification runner and command discovery.

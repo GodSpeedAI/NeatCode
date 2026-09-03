@@ -67,22 +67,22 @@ graph TD
   - Contains **zero business logic**. It delegates completely to `lib/envelope.mjs` and `lib/verify.mjs`.
   - Emits JSON on `--json` and human-readable Markdown by default.
   - Exits `0` on success, `1` on execution failure or strict validation failure (`--strict`), and `2` on syntax/usage errors.
-- **Evidence**: [`bin/neatcode.mjs:101-157`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/bin/neatcode.mjs#L101-L157).
+- **Evidence**: [`bin/neatcode.mjs:101-157`](bin/neatcode.mjs#L101-L157).
 
 ### Layer 2: Acquisition and Synthesis Harness (`lib/`)
 A cluster of cohesive, zero-dependency ES modules:
-- [`lib/git.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/git.mjs): Safe interaction with `git` using `child_process.spawnSync` with explicit argument arrays (never a shell string) to prevent command injection.
-- [`lib/diff.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/diff.mjs): Unified diff parser extracting modified files, hunks, line counts, renames, and path classifications (`source`, `test`, `docs`, `config`, `asset`, `generated`).
-- [`lib/repo.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/repo.mjs): Inspects tracked repository morphology, package manifests, instruction files (`AGENTS.md`, `CLAUDE.md`), architecture claims (`README.md`, `docs/adr/`), workspace configuration, and file size outliers.
-- [`lib/context.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs): Expands **exactly one bounded context ring** per changed path without whole-repository dumping: owning package, local imports, discoverable callers, and related tests.
-- [`lib/verify.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/verify.mjs): Discovers declared proof mechanisms (`package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, `Makefile`) and executes operator-requested verification commands with condensed output capture.
-- [`lib/envelope.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/envelope.mjs): Orchestrates acquisition modules, validates structural integrity via [`validateEnvelope()`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/envelope.mjs#L118-L159), and renders formatted Markdown or JSON.
+- [`lib/git.mjs`](lib/git.mjs): Safe interaction with `git` using `child_process.spawnSync` with explicit argument arrays (never a shell string) to prevent command injection.
+- [`lib/diff.mjs`](lib/diff.mjs): Unified diff parser extracting modified files, hunks, line counts, renames, and path classifications (`source`, `test`, `docs`, `config`, `asset`, `generated`).
+- [`lib/repo.mjs`](lib/repo.mjs): Inspects tracked repository morphology, package manifests, instruction files (`AGENTS.md`, `CLAUDE.md`), architecture claims (`README.md`, `docs/adr/`), workspace configuration, and file size outliers.
+- [`lib/context.mjs`](lib/context.mjs): Expands **exactly one bounded context ring** per changed path without whole-repository dumping: owning package, local imports, discoverable callers, and related tests.
+- [`lib/verify.mjs`](lib/verify.mjs): Discovers declared proof mechanisms (`package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, `Makefile`) and executes operator-requested verification commands with condensed output capture.
+- [`lib/envelope.mjs`](lib/envelope.mjs): Orchestrates acquisition modules, validates structural integrity via [`validateEnvelope()`](lib/envelope.mjs#L118-L159), and renders formatted Markdown or JSON.
 
 ### Layer 3: Reasoning Protocol & Skill Kernel (`skills/neatcode/SKILL.md`)
 - **Responsibility**: Orchestrates how an AI coding assistant thinks through a software modification or inspection task.
 - **Structure**:
   - **Frontmatter**: Declares skill name, version, and trigger descriptions.
-  - **Disciplines**: Earnedness ([`references/restraint.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/restraint.md)), Evidence ([`references/evidence.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/evidence.md)), Epistemic Honesty, Canonical Authority, Diff-Relative Fairness, Proportionate Depth.
+  - **Disciplines**: Earnedness ([`references/restraint.md`](skills/neatcode/references/restraint.md)), Evidence ([`references/evidence.md`](skills/neatcode/references/evidence.md)), Epistemic Honesty, Canonical Authority, Diff-Relative Fairness, Proportionate Depth.
   - **Depth Ladder**: `Trace` (≤1 file, no behavior change), `Standard` (regular feature/fix), `Deep` (auth, billing, schema, concurrency, published interfaces).
   - **Reasoning Sequence**: Intent $\rightarrow$ Surface $\rightarrow$ Structure $\rightarrow$ Semantics $\rightarrow$ Evidence.
   - **Default Build Flow**: 9 sequential steps ensuring prevention before syntax generation.
@@ -90,10 +90,10 @@ A cluster of cohesive, zero-dependency ES modules:
 
 ### Layer 4: Reference Modules & Taxonomy (`skills/neatcode/references/`)
 Progressively loaded Markdown files containing deep operational rules:
-- **Verbs** ([`references/verbs/`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/verbs/)): Protocols for review, audit, restructure, study, and harden.
-- **Architecture Phenotype** ([`references/architecture/phenotype.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/architecture/phenotype.md)): Conformance assessment comparing genotype (claimed) against phenotype (expressed).
-- **Failure Taxonomy** ([`references/taxonomy.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/taxonomy.md) & 14 sub-family files): Detailed failure patterns, observable signals, risks, exceptions, and corrections.
-- **Gates & Critique** ([`references/gates.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/gates.md)): 52 pre-completion gates in 8 groups and a 6-axis scoring rubric.
+- **Verbs** ([`references/verbs/`](skills/neatcode/references/verbs)): Protocols for review, audit, restructure, study, and harden.
+- **Architecture Phenotype** ([`references/architecture/phenotype.md`](skills/neatcode/references/architecture/phenotype.md)): Conformance assessment comparing genotype (claimed) against phenotype (expressed).
+- **Failure Taxonomy** ([`references/taxonomy.md`](skills/neatcode/references/taxonomy.md) & 14 sub-family files): Detailed failure patterns, observable signals, risks, exceptions, and corrections.
+- **Gates & Critique** ([`references/gates.md`](skills/neatcode/references/gates.md)): 52 pre-completion gates in 8 groups and a 6-axis scoring rubric.
 
 ---
 
@@ -154,9 +154,9 @@ graph TD
 
 ### Dependency Invariants
 1. **Zero External Runtime Dependencies**: `package.json` contains no `"dependencies"`. All harness operations rely strictly on Node.js built-in modules (`node:fs`, `node:child_process`, `node:path`, `node:os`).
-2. **Subprocess Isolation**: External binaries (`git`) are invoked exclusively via `spawnSync` with explicit arguments array, avoiding shell interpolation vulnerabilities ([`lib/git.mjs:11`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/git.mjs#L11)). Verification commands explicitly enable `shell: true` because they are provided directly by the operator ([`lib/verify.mjs:27`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/verify.mjs#L27)).
-3. **No AST Parsing in the Harness**: Context expansion is deliberately textual and regex-based ([`lib/context.mjs:15-23`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs#L15-L23)). Full semantic understanding is the agent's responsibility; keeping the harness lightweight and multi-language.
-4. **Link Graph Closure**: Every Markdown link inside `skills/neatcode/` must resolve to a valid file on disk, enforced by [`test/skill-integrity.test.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/test/skill-integrity.test.mjs).
+2. **Subprocess Isolation**: External binaries (`git`) are invoked exclusively via `spawnSync` with explicit arguments array, avoiding shell interpolation vulnerabilities ([`lib/git.mjs:11`](lib/git.mjs#L11)). Verification commands explicitly enable `shell: true` because they are provided directly by the operator ([`lib/verify.mjs:27`](lib/verify.mjs#L27)).
+3. **No AST Parsing in the Harness**: Context expansion is deliberately textual and regex-based ([`lib/context.mjs:15-23`](lib/context.mjs#L15-L23)). Full semantic understanding is the agent's responsibility; keeping the harness lightweight and multi-language.
+4. **Link Graph Closure**: Every Markdown link inside `skills/neatcode/` must resolve to a valid file on disk, enforced by [`test/skill-integrity.test.mjs`](test/skill-integrity.test.mjs).
 
 ---
 
@@ -232,22 +232,22 @@ The **Change Envelope** is the central data contract of the system. It represent
 ## 6. Subsystem Deep Dives
 
 For detailed subsystem specifications, see:
-- [CLI and Harness Guide](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/docs/subsystems/cli-and-harness.md)
-- [Envelope Engine](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/docs/subsystems/envelope-engine.md)
-- [Skill Kernel and Reasoning Protocol](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/docs/subsystems/skill-kernel.md)
-- [Architectural Phenotype Engine](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/docs/subsystems/phenotype-engine.md)
-- [Taxonomy and Gate Subsystem](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/docs/subsystems/taxonomy-and-gates.md)
+- [CLI and Harness Guide](docs/subsystems/cli-and-harness.md)
+- [Envelope Engine](docs/subsystems/envelope-engine.md)
+- [Skill Kernel and Reasoning Protocol](docs/subsystems/skill-kernel.md)
+- [Architectural Phenotype Engine](docs/subsystems/phenotype-engine.md)
+- [Taxonomy and Gate Subsystem](docs/subsystems/taxonomy-and-gates.md)
 
 ---
 
 ## 7. Source Trail
 
-- [`bin/neatcode.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/bin/neatcode.mjs) — CLI argument dispatch and process boundary.
-- [`lib/envelope.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/envelope.mjs) — Change envelope assembly, schema contract, and markdown formatter.
-- [`lib/git.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/git.mjs) — Git interaction and revision resolution.
-- [`lib/diff.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/diff.mjs) — Diff parsing and file kind classification.
-- [`lib/repo.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/repo.mjs) — Repository morphology, manifests, instruction file discovery.
-- [`lib/context.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/context.mjs) — One-ring context expansion.
-- [`lib/verify.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/lib/verify.mjs) — Verification check discovery and process execution.
-- [`skills/neatcode/SKILL.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/SKILL.md) — Natural language skill definition and reasoning sequence.
-- [`test/skill-integrity.test.mjs`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/test/skill-integrity.test.mjs) — Structural integrity guard test suite.
+- [`bin/neatcode.mjs`](bin/neatcode.mjs) — CLI argument dispatch and process boundary.
+- [`lib/envelope.mjs`](lib/envelope.mjs) — Change envelope assembly, schema contract, and markdown formatter.
+- [`lib/git.mjs`](lib/git.mjs) — Git interaction and revision resolution.
+- [`lib/diff.mjs`](lib/diff.mjs) — Diff parsing and file kind classification.
+- [`lib/repo.mjs`](lib/repo.mjs) — Repository morphology, manifests, instruction file discovery.
+- [`lib/context.mjs`](lib/context.mjs) — One-ring context expansion.
+- [`lib/verify.mjs`](lib/verify.mjs) — Verification check discovery and process execution.
+- [`skills/neatcode/SKILL.md`](skills/neatcode/SKILL.md) — Natural language skill definition and reasoning sequence.
+- [`test/skill-integrity.test.mjs`](test/skill-integrity.test.mjs) — Structural integrity guard test suite.

@@ -71,5 +71,5 @@ Every added hardening mechanism must be paired with a test:
 ---
 
 ## Source Trail
-- [`skills/neatcode/references/verbs/harden.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/verbs/harden.md) — Harden verb protocol.
-- [`skills/neatcode/references/archetypes.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/archetypes.md) — Archetype definitions governing dimension applicability.
+- [`skills/neatcode/references/verbs/harden.md`](../../skills/neatcode/references/verbs/harden.md) — Harden verb protocol.
+- [`skills/neatcode/references/archetypes.md`](../../skills/neatcode/references/archetypes.md) — Archetype definitions governing dimension applicability.

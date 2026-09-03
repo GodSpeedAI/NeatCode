@@ -46,10 +46,10 @@ Install via the Claude Code plugin marketplace:
 /plugin marketplace add anthropics/claude-plugins-community
 /plugin install @claude-community:neatcode
 ```
-Or copy [`skills/neatcode/SKILL.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/SKILL.md) and [`skills/neatcode/references/`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/references/) into `~/.claude/skills/neatcode/`.
+Or copy [`skills/neatcode/SKILL.md`](../skills/neatcode/SKILL.md) and [`skills/neatcode/references/`](../skills/neatcode/references) into `~/.claude/skills/neatcode/`.
 
 ### Cursor
-Add the contents of [`skills/neatcode/SKILL.md`](file:///wsl.localhost/Ubuntu-26.04/home/sprime01/projects/NeatCode/skills/neatcode/SKILL.md) (omitting the frontmatter header) into `.cursor/rules/neatcode.mdc`.
+Add the contents of [`skills/neatcode/SKILL.md`](../skills/neatcode/SKILL.md) (omitting the frontmatter header) into `.cursor/rules/neatcode.mdc`.
 
 ### Codex
 Copy the skill files into `~/.codex/skills/neatcode/` (for user-global scope) or `.codex/skills/neatcode/` (for project-local scope).

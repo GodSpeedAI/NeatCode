@@ -64,9 +64,8 @@ Scope discipline is part of the product, so the exclusions are part of the roadm
 - **A universal multi-language static analyzer.** Code acquires evidence; the skill judges. An
   AST framework would move judgment into procedural rules, which is the design this project
   exists to avoid.
-- **Generalization to non-code "idea slop."** The generalization is real and is discussed in
-  [`docs/origin-conversation.md`](docs/origin-conversation.md). It is a different product.
-  Diluting this one into a generic intellectual-quality framework would cost the specificity
-  that makes it useful.
+- **Generalization to non-code "idea slop."** The generalization is real, but it is a
+  different product. Diluting this one into a generic intellectual-quality framework would
+  cost the specificity that makes it useful.
 - **A design mode.** The upstream project NeatCode derives from — Hallmark — already does that
   well, and better than a bolted-on second product would.

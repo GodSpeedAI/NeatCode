@@ -3,6 +3,7 @@
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -37,7 +38,8 @@ const markdownFiles = walk(SKILL_DIR).filter((f) => f.endsWith('.md'));
 
 /** Relative markdown links, excluding anchors, external URLs and code spans. */
 function linksIn(file) {
-  const text = readFileSync(file, 'utf8');
+  const raw = readFileSync(file, 'utf8');
+  const text = raw.replace(/```[\s\S]*?```/g, '').replace(/`[^`\n]*`/g, '');
   const links = [];
   for (const match of text.matchAll(/\[[^\]]*\]\(([^)\s]+)\)/g)) {
     const target = match[1].split('#')[0];
@@ -87,11 +89,36 @@ test('skill frontmatter is well formed and matches the package version', () => {
   for (const verb of VERBS) {
     assert.ok(fields.description.includes(verb), `description should mention ${verb}`);
   }
+
+  const cliVersion = execFileSync(process.execPath, [join(ROOT, 'bin', 'neatcode.mjs'), '--version'], {
+    encoding: 'utf8',
+  }).trim();
+  assert.equal(cliVersion, pkg.version, 'bin/neatcode.mjs --version must match package.json');
 });
 
 test('every relative link inside the skill resolves', () => {
   const broken = [];
   for (const file of markdownFiles) {
+    for (const link of linksIn(file)) {
+      const target = resolve(dirname(file), link);
+      if (!existsSync(target)) broken.push(`${relative(ROOT, file)} -> ${link}`);
+    }
+  }
+  assert.deepEqual(broken, []);
+});
+
+test('every relative link in documentation and root markdown resolves', () => {
+  const docFiles = [
+    ...walk(join(ROOT, 'docs')),
+    join(ROOT, 'README.md'),
+    join(ROOT, 'ROADMAP.md'),
+    join(ROOT, 'architecture.md'),
+    join(ROOT, 'documentation-map.md'),
+    join(ROOT, 'source-map.md'),
+  ].filter((f) => f.endsWith('.md'));
+
+  const broken = [];
+  for (const file of docFiles) {
     for (const link of linksIn(file)) {
       const target = resolve(dirname(file), link);
       if (!existsSync(target)) broken.push(`${relative(ROOT, file)} -> ${link}`);
