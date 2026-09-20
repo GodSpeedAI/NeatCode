@@ -28,6 +28,7 @@ build/
 .env
 .env.local
 .env.*.local
+.tmp/
 
 # `skills` CLI install lockfile — generated whenever 'skills add' runs in this
 # directory, not part of the skill source.

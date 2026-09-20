@@ -10,218 +10,1265 @@
        width="100%">
 </p>
 
-**A software-engineering skill for Claude Code, Cursor, and Codex that refuses to ship
-code slop.**
+### Make plausible code earn your confidence.
 
 [![npm version](https://img.shields.io/npm/v/%40godspeedai%2Fneatcode)](https://www.npmjs.com/package/@godspeedai/neatcode)
 [![license](https://img.shields.io/npm/l/%40godspeedai%2Fneatcode)](LICENSE)
 
-> Code that is reasoned, not generated.
+AI coding agents are very good at producing code that looks finished.
 
-*Neat* in the joinery sense: **a neat fit**, exact, earned, nothing left over. Not tidiness,
-not formatting. NeatCode has nothing to say about brace style and a great deal to say about
-whether that `ProviderManager` should exist.
+That is becoming less reassuring.
 
----
+The new interface fits the surrounding style. The unit test is green. The agent tells you it checked the callers. The abstraction has a respectable name. Nothing in the diff looks obviously reckless.
 
-## The problem this exists to catch
-
-An agent writes a permission check in one handler. Two files later it needs the same logic,
-doesn't remember writing it the first time, and writes a second version. Both pass their
-tests. Both look reasonable in isolation. Now there are two authorities answering the same
-question, and neither knows the other exists. Nothing fails today. It just waits.
-
-> **Code slop:** plausible code that technically works and has not earned the confidence
-> it projects.
-
-The dangerous part isn't the obvious mess, the giant files and tangled control flow you can
-spot on sight. It's the version that looks sophisticated: a clean interface, a passing test,
-a confident completion summary, and no actual claim to any of it. Sophisticated slop wears a
-collared shirt. A linter won't catch it. Neither will the green checkmark.
-
-NeatCode installs the judgment of an engineer who has already read the repository, before
-the agent writes and again before it claims to be done.
-
-## What it is for
-
-The problem is not that AI writes ugly code. It is that AI writes **plausible** code: locally
-correct, globally wrong. It adds an interface with one implementation. It writes a second
-`normalizeEmail` beside the one that already exists. It calls an API that does not exist in the
-installed version. It wraps a registry in a manager that forwards every call. It writes a test
-that passes against the bug. It says "all tests pass" without running them.
-
-Each of those is defensible in isolation. Together they are how a codebase becomes
-unmaintainable in six months.
-
----
-
-## Five verbs
-
-| Verb | What it does |
-| --- | --- |
-| *(default)* | Implement a change. Orient in the repository, state the contract, choose the structure **before** the syntax, implement the smallest coherent change, then critique the diff before declaring completion. |
-| `neatcode review [source]` | Judge a proposed change: working tree, staged, a commit, a range, a branch, a patch, a pasted diff. Every finding labelled **introduced · worsened · exposed · pre-existing · resolved**. |
-| `neatcode audit <target>` | Judge existing code: a file, a module, a subsystem, the repository. Architecture conformance, authority, boundaries, tests, operational readiness, debt. No edits. |
-| `neatcode restructure <target>` | Keep the behaviour, replace the implementation strategy. Characterizes behaviour before changing it. |
-| `neatcode study <target>` | Extract the repository's engineering DNA. Separates **invariants** from **conventions** from **residue**. Optionally writes a portable `engineering.md`. |
-| `neatcode harden <target>` | Take working-on-the-happy-path code to production credibility: idempotency, concurrency, cancellation, recovery, observability, security boundaries, migrations, wiring. |
-
----
-
-## The change envelope
-
-A diff alone cannot be judged. A new `ProviderManager` that forwards to a `ProviderRegistry`
-is unearned indirection **or** a deliberate stable facade, and nothing in the diff decides
-which.
+Three months later you discover:
 
 ```text
-change envelope
-= requested intent
-+ diff or change set
-+ changed-file context
-+ repository instructions
-+ declared architecture
-+ observed repository structure
-+ relevant dependencies and callers
-+ tests and verification evidence
+there were already two ways to do the same thing
+
+the new abstraction has one implementation and no reason to exist
+
+the test proves the mock, not the production behavior
+
+the API used by the code does not exist in the installed dependency
+
+the retry path duplicates an operation that is not idempotent
+
+the new manager simply forwards calls to the registry underneath it
+
+the code works until cancellation, concurrency, recovery,
+migration, or partial failure enters the room
 ```
 
-A small zero-dependency harness assembles it deterministically:
+None of those necessarily look like bad code in isolation.
 
-```bash
-neatcode envelope --staged --verb review --verify "npm test"
-neatcode envelope --range main...HEAD --verb review
-neatcode envelope --paths src/billing --verb audit
-neatcode envelope --repo --verb study --json
-neatcode checks                                  # what the repo declares as proof
-```
+That is the problem.
 
-The harness **acquires and structures evidence**. It never judges. There is no field in the
-envelope schema meaning "assumed to pass," that absence is the point.
+**NeatCode is an engineering-hardening skill for AI-assisted software development. It reviews generated or existing code against the repository's contracts, invariants, failure paths, operational constraints, and tests, then hardens the implementation toward production without changing its intended behavior.**
+
+Plainly:
+
+> AI can produce a plausible implementation very quickly. NeatCode checks whether the implementation actually belongs in this repository and whether it can survive the conditions the happy path left out.
+
+It works with Claude Code, Cursor, Codex, and other skill-capable coding agents.
+
+The skill provides the engineering judgment.
+
+A small optional CLI assembles the evidence that judgment should operate on.
 
 ---
 
-## What it actually checks
+## The dangerous code is often the code that looks reasonable
 
-**Two questions**, applied relentlessly:
+Obvious mess is relatively easy to find.
 
-- **Earnedness**: *what concrete constraint earns this complexity?* "It's more extensible" is
-  not a constraint. A second implementation that exists today is.
-- **Evidence**: *what supports the claim that this is correct and complete?* "Tests pass" is a
-  claim about a command you ran and an exit code you saw.
+A 2,000-line function is suspicious.
 
-**Fourteen failure families**, each entry carrying its definition, signals, underlying
-reasoning failure, risk, debt trajectory, legitimate exceptions, likely false positives,
-correction, and verification:
+A pile of copy-pasted conditionals is suspicious.
 
-epistemic · context · contract · completion · abstraction · authority · boundary ·
-state & concurrency · failure-handling · tests · observability · security · change-discipline ·
+A test suite full of skipped tests is suspicious.
+
+Modern AI-generated debt is often neater than that.
+
+Consider this:
+
+```text
+src/providers/registry.ts
+src/providers/manager.ts
+```
+
+`ProviderRegistry` already owns provider registration and lookup.
+
+An agent needs a provider during a new feature, so it introduces `ProviderManager`.
+
+The manager receives the registry.
+
+Every method forwards to the registry.
+
+The naming is clean.
+
+The types work.
+
+The tests pass.
+
+The agent explains that the new layer "improves extensibility."
+
+Nothing is broken.
+
+Nothing has earned the extra layer either.
+
+Now every future developer and agent has to answer:
+
+```text
+Do I call ProviderRegistry?
+
+Do I call ProviderManager?
+
+Which one owns lifecycle?
+
+Which one owns validation?
+
+Will these diverge later?
+
+Is the distinction architectural or accidental?
+```
+
+The code just increased the number of distinctions the repository has to maintain without increasing what the system can actually do.
+
+NeatCode looks for that kind of change.
+
+---
+
+## Code slop
+
+NeatCode uses **code slop** in a specific sense:
+
+> **Plausible code that technically works and has not earned the confidence it projects.**
+
+That includes much more than ugly AI output.
+
+It can be:
+
+* unnecessary abstraction
+* duplicate authority
+* invented APIs
+* locally correct code that violates repository architecture
+* tests that confirm implementation details instead of behavior
+* completion claims unsupported by actual verification
+* happy-path implementations with no recovery model
+* wrappers that add vocabulary but no responsibility
+* defensive code that hides a broken contract
+* abstractions added for hypothetical futures
+* comments explaining complexity that should not exist
+* "production-ready" code with no operational path through failure
+
+A linter cannot decide most of those questions.
+
+Neither can formatting.
+
+The issue is engineering judgment.
+
+---
+
+## Start with the change you are about to commit
+
+You do not need to adopt a new development process.
+
+Take the diff you already have.
+
+Stage it:
+
+```bash
+git add -A
+```
+
+Build a review envelope and run the repository's proof:
+
+```bash
+neatcode envelope \
+  --staged \
+  --verb review \
+  --verify "npm test"
+```
+
+Then ask your coding agent:
+
+```text
+neatcode review the staged changes
+```
+
+NeatCode should answer questions such as:
+
+```text
+Did this change solve the requested problem?
+
+Did the repository already contain the needed mechanism?
+
+Does the new structure preserve the architecture already in use?
+
+Did the change create a second authority?
+
+What complexity was introduced?
+
+What concrete constraint earns that complexity?
+
+Which failure paths now exist?
+
+Were the relevant checks actually run?
+
+What does the evidence establish?
+
+What remains unknown?
+```
+
+That is the smallest useful NeatCode loop.
+
+---
+
+## Two questions do most of the work
+
+NeatCode repeatedly asks two questions.
+
+### What earned this?
+
+Every new abstraction, dependency, state machine, interface, manager, cache, wrapper, background task, fallback, retry, or layer creates maintenance cost.
+
+That does not make complexity bad.
+
+It means complexity should purchase something real.
+
+This is weak evidence:
+
+> We may need multiple implementations later.
+
+This is stronger:
+
+> Two implementations exist today and callers require a stable interface across them.
+
+Weak:
+
+> This makes the code more flexible.
+
+Stronger:
+
+> Three current callers vary along this specific dimension, and the abstraction removes duplicated policy while preserving one authority.
+
+The question is not:
+
+> Is this pattern considered good architecture?
+
+It is:
+
+> **What constraint in this repository earns this structure?**
+
+---
+
+### What supports this claim?
+
+AI coding agents make many claims during ordinary work:
+
+```text
+all tests pass
+
+the existing behavior is preserved
+
+this API is supported
+
+this is thread-safe
+
+the migration is backward-compatible
+
+there are no other callers
+
+the error is handled
+
+the change is complete
+```
+
+Some may be true.
+
+NeatCode asks what evidence makes them true.
+
+A test result is evidence if the test actually ran.
+
+A search result is evidence about the scope that was searched.
+
+A compiler result is evidence about what the compiler checked.
+
+An agent remembering that it "looked at the callers" is not the same kind of evidence.
+
+NeatCode does not require certainty.
+
+It requires claims to stop pretending they have more support than they do.
+
+---
+
+## A diff is not enough context to judge a diff
+
+Imagine reviewing this addition:
+
+```ts
+class ProviderManager {
+  constructor(private registry: ProviderRegistry) {}
+
+  get(name: string) {
+    return this.registry.get(name);
+  }
+}
+```
+
+From the diff alone, this might be:
+
+```text
+unnecessary indirection
+```
+
+or:
+
+```text
+the beginning of a deliberate stable facade
+```
+
+The code cannot tell you which.
+
+You need the surrounding repository.
+
+NeatCode calls that evidence the **change envelope**:
+
+```text
+requested intent
+      +
+diff or change set
+      +
+changed-file context
+      +
+repository instructions
+      +
+declared architecture
+      +
+observed repository structure
+      +
+relevant dependencies
+      +
+callers
+      +
+tests
+      +
+verification evidence
+```
+
+The optional CLI assembles that material deterministically.
+
+For staged work:
+
+```bash
+neatcode envelope --staged --verb review
+```
+
+For a range:
+
+```bash
+neatcode envelope --range main...HEAD --verb review
+```
+
+For an existing subsystem:
+
+```bash
+neatcode envelope --paths src/billing --verb audit
+```
+
+For the whole repository:
+
+```bash
+neatcode envelope --repo --verb study --json
+```
+
+Ask what verification the repository already declares:
+
+```bash
+neatcode checks
+```
+
+The harness gathers and structures evidence.
+
+It does not decide whether the code is good.
+
+That judgment remains in the skill.
+
+---
+
+## Six ways to use NeatCode
+
+### Implement
+
+The default mode.
+
+Ask NeatCode to make a change and it first orients in the repository, identifies the contract, chooses the smallest coherent structure, implements it, then critiques the resulting diff before declaring completion.
+
+```text
+request
+   ↓
+repository orientation
+   ↓
+contract
+   ↓
+structure
+   ↓
+implementation
+   ↓
+verification
+   ↓
+critique
+```
+
+The useful constraint is that syntax comes after enough understanding to choose the structure.
+
+---
+
+### Review
+
+```text
+neatcode review [source]
+```
+
+Judge a proposed change.
+
+The source can be:
+
+* working tree
+* staged changes
+* commit
+* commit range
+* branch
+* patch
+* pasted diff
+
+Findings distinguish:
+
+```text
+introduced
+worsened
+exposed
+pre-existing
+resolved
+```
+
+That distinction keeps a review from blaming the current change for every historical defect it happens to reveal.
+
+---
+
+### Audit
+
+```text
+neatcode audit <target>
+```
+
+Evaluate existing code without editing it.
+
+The target may be a file, module, subsystem, or repository.
+
+Audit looks at areas such as:
+
+```text
+architecture conformance
+authority
+boundaries
+failure handling
+tests
+operational readiness
+security
+observability
+technical debt
+```
+
+Use this when the question is:
+
+> What condition is this subsystem actually in?
+
+rather than:
+
+> What should I change right now?
+
+---
+
+### Restructure
+
+```text
+neatcode restructure <target>
+```
+
+Preserve intended behavior while changing the implementation strategy.
+
+NeatCode first characterizes the behavior that must survive.
+
+That matters because a refactor that cannot state what it is preserving is just a rewrite with optimism.
+
+---
+
+### Study
+
+```text
+neatcode study <target>
+```
+
+Extract the repository's engineering DNA.
+
+NeatCode separates what it finds into:
+
+```text
+invariants
+conventions
+residue
+```
+
+An invariant is load-bearing.
+
+A convention is a local choice worth following for consistency.
+
+Residue is merely something that exists.
+
+That distinction matters for agents because repositories contain historical accidents alongside intentional architecture. Copying everything equally faithfully reproduces debt.
+
+Study can optionally write a portable:
+
+```text
+engineering.md
+```
+
+for later agent work.
+
+---
+
+### Harden
+
+```text
+neatcode harden <target>
+```
+
+Take code that works on the happy path and examine what happens when reality stops cooperating.
+
+Hardening covers concerns such as:
+
+```text
+idempotency
+concurrency
+timeouts
+cancellation
+retry behavior
+partial failure
+recovery
+observability
+security boundaries
+migrations
+integration wiring
+resource cleanup
+```
+
+This is where NeatCode's category is clearest.
+
+The task is no longer:
+
+> Can this code run?
+
+It becomes:
+
+> **Can we rely on this code when the conditions stop being ideal?**
+
+---
+
+## Working code can still be wrong for the repository
+
+AI-generated code often optimizes for local correctness.
+
+Repositories require something stronger.
+
+Suppose the codebase has one established authority for resolving tenant identity:
+
+```text
+TenantContext
+```
+
+A new feature introduces:
+
+```text
+TenantResolver
+```
+
+Both implementations may be correct.
+
+The problem is now architectural:
+
+```text
+Which one decides?
+
+Can they disagree?
+
+Which callers use which one?
+
+Where does policy belong?
+
+What happens when one changes?
+```
+
+NeatCode checks whether a change creates duplicate sources of authority, crosses existing boundaries, or introduces a second vocabulary for the same responsibility.
+
+That is why repository context matters more than whether the patch looks elegant.
+
+---
+
+## Architecture claims can be wrong too
+
+Repositories regularly contain documentation describing an architecture the implementation no longer has.
+
+NeatCode does not automatically treat documentation as truth.
+
+Its architectural conformance protocol compares declared architecture with observed imports, call relationships, boundaries, and implementation structure.
+
+Possible verdicts include:
+
+```text
+conformant
+partially conformant
+nominal
+contradictory
+unverifiable
+coherent emergent alternative
+```
+
+That last result matters.
+
+Suppose the README says:
+
+```text
+Controller → Service → Repository
+```
+
+but years of implementation have converged coherently on:
+
+```text
+Handler → Domain → Port
+```
+
+The software may not need to be "fixed" back into the diagram.
+
+The cheaper and more truthful repair may be updating the documentation.
+
+NeatCode is meant to distinguish architectural drift from architectural decay.
+
+---
+
+## Tests are evidence, not decoration
+
+NeatCode does not compete with your tests.
+
+It asks whether the tests establish the claim being made.
+
+Suppose an agent fixes duplicate payment submission by adding a retry guard.
+
+It also adds this test:
+
+```text
+when retry guard is true
+the duplicate path is skipped
+```
+
+The test may pass.
+
+But if production duplicate submission happens because two requests race before either writes the guard, the test proves the implementation's own assumption rather than the actual failure condition.
+
+NeatCode looks at:
+
+```text
+the claimed behavior
+the failure mechanism
+the test boundary
+the production path
+the evidence produced
+```
+
+A green test matters.
+
+Which claim it makes green matters more.
+
+---
+
+## Failure paths are part of the implementation
+
+Generated code is often strongest where examples are plentiful:
+
+```text
+request
+  ↓
+success
+  ↓
+response
+```
+
+Production spends a great deal of time elsewhere:
+
+```text
+request
+  ↓
+timeout
+
+request
+  ↓
+partial write
+
+request
+  ↓
+cancel
+
+request
+  ↓
+dependency unavailable
+
+request
+  ↓
+retry after ambiguous completion
+
+request
+  ↓
+two workers race
+
+request
+  ↓
+process dies halfway through
+```
+
+NeatCode does not require every feature to solve every possible failure.
+
+It asks whether the important failure paths have been considered relative to the actual consequences of the code.
+
+A local formatting utility and a payment writer deserve different hardening burdens.
+
+---
+
+## Complexity should buy a capability
+
+A useful NeatCode heuristic is:
+
+```text
+new complexity
+      ↓
+what new constraint can the system now satisfy?
+```
+
+Examples:
+
+### Earned
+
+```text
+Introduce an interface because two real providers
+already require different implementations.
+```
+
+### Probably unearned
+
+```text
+Introduce an interface around one implementation
+because another provider might exist someday.
+```
+
+### Earned
+
+```text
+Introduce idempotency storage because retries can
+duplicate an externally consequential operation.
+```
+
+### Probably unearned
+
+```text
+Introduce a distributed locking abstraction around
+an operation that is local, deterministic, and never concurrent.
+```
+
+The goal is not minimalism.
+
+It is **earned structure**.
+
+A codebase should be as complicated as the reality it has to handle, and no more complicated merely because an agent knows more patterns.
+
+---
+
+## NeatCode does not replace deterministic tools
+
+Use the compiler.
+
+Use the type checker.
+
+Use the test runner.
+
+Use the linter.
+
+Use the security scanner.
+
+Use the schema validator.
+
+NeatCode is useful around the questions those tools cannot decide alone:
+
+```text
+Was this the right abstraction?
+
+Is this the right authority boundary?
+
+Did we duplicate an existing mechanism?
+
+Does this test exercise the consequential behavior?
+
+Did the fix increase blast radius unnecessarily?
+
+Does the implementation fit the repository's actual architecture?
+
+What evidence supports the completion claim?
+```
+
+When a deterministic tool can answer a question, let it.
+
+NeatCode should consume the result rather than imitate the tool with prose.
+
+---
+
+## Fourteen failure families
+
+NeatCode organizes recurring engineering failures into fourteen families:
+
+```text
+epistemic
+context
+contract
+completion
+abstraction
+authority
+boundary
+state & concurrency
+failure-handling
+tests
+observability
+security
+change-discipline
 maintainability theater
+```
 
-**An architectural conformance protocol** that compares what a repository *claims* against
-what its imports and call graph *express*, and returns a verdict: conformant · partially
-conformant · **nominal** · contradictory · unverifiable · coherent emergent alternative.
+Each family includes:
 
-That last verdict matters: code that has diverged from its README into something coherent is
-not decayed. The documentation is wrong, and that is the cheaper fix.
+* definition
+* common signals
+* underlying reasoning failure
+* risk
+* likely debt trajectory
+* legitimate exceptions
+* common false positives
+* likely correction
+* appropriate verification
 
-**Fifty-two pre-completion gates** in eight groups, and a six-axis critique (correctness ·
-repository fit · semantic integrity · restraint · operational credibility · evidence) where
-anything below 3 forces a revision pass.
+These are not meant to become a checklist the model recites against every diff.
+
+They are progressively loaded when the evidence suggests that family matters.
+
+---
+
+## Completion has gates
+
+NeatCode includes pre-completion gates across eight groups and evaluates a change across six broader dimensions:
+
+```text
+correctness
+repository fit
+semantic integrity
+restraint
+operational credibility
+evidence
+```
+
+A weak dimension forces another revision pass rather than being averaged away by strengths elsewhere.
+
+This matters because:
+
+```text
+beautiful structure
++
+missing error handling
+```
+
+is still missing error handling.
+
+And:
+
+```text
+excellent test coverage
++
+a second source of authority
+```
+
+still leaves two sources of authority.
+
+Engineering properties are not always safely interchangeable.
 
 ---
 
 ## Install
 
-**skills.sh** — works across Claude Code, Cursor, Codex, GitHub Copilot, and more:
+### skills.sh
 
-```
+For Claude Code, Cursor, Codex, GitHub Copilot, and other supported agents:
+
+```bash
 npx skills add GodSpeedAI/NeatCode
 ```
 
-**Claude Code plugin** (community marketplace):
+### Claude Code plugin
 
-```
+```text
 /plugin marketplace add anthropics/claude-plugins-community
 /plugin install @claude-community:neatcode
 ```
 
-**Or copy manually** — [`SKILL.md`](skills/neatcode/SKILL.md) + [`references/`](skills/neatcode/references/) into:
+### Manual installation
 
-- **Claude Code**: `~/.claude/skills/neatcode/`
-- **Cursor**: `.cursor/rules/neatcode.mdc` (body of `SKILL.md`, no frontmatter)
-- **Codex**: `~/.codex/skills/neatcode/` (personal) or `.codex/skills/neatcode/` (project-scoped)
+Copy:
 
-**The harness** (optional, but recommended):
-
-```bash
-npm install -g @godspeedai/neatcode    # provides the `neatcode` command
+```text
+skills/neatcode/SKILL.md
+skills/neatcode/references/
 ```
 
-The skill works without it — it falls back to plain `git diff` — but the harness is what makes
-"did that check actually run?" an auditable fact rather than a recollection.
+to the appropriate skill location.
+
+Claude Code:
+
+```text
+~/.claude/skills/neatcode/
+```
+
+Codex personal:
+
+```text
+~/.codex/skills/neatcode/
+```
+
+Codex project:
+
+```text
+.codex/skills/neatcode/
+```
+
+Cursor can use the `SKILL.md` body as a project rule:
+
+```text
+.cursor/rules/neatcode.mdc
+```
+
+without the skill frontmatter.
 
 ---
 
-## Try it
+## Install the evidence harness
+
+The skill works without the CLI.
+
+The optional harness makes repository evidence easier to reproduce:
 
 ```bash
-# review what you are about to commit
-git add -A && neatcode envelope --staged --verb review --verify "npm test"
-# then, in your agent: "neatcode review the staged changes"
+npm install -g @godspeedai/neatcode
 ```
 
-Worked invocations in [`docs/recipes.md`](docs/recipes.md). Worked DNA extractions in
-[`docs/study-examples.md`](docs/study-examples.md).
+This provides the:
+
+```text
+neatcode
+```
+
+command.
+
+Without it, the skill can fall back to ordinary repository inspection such as `git diff`.
+
+With it, statements such as:
+
+```text
+npm test was executed against this change
+```
+
+can be carried in the structured envelope instead of depending on conversational memory.
 
 ---
 
-## Design notes
+## Try it in five minutes
 
-**The intelligence is natural language.** The judgment lives in Markdown, a kernel plus
-progressively-loaded references, not in procedural code. Code acquires and structures
-evidence; the skill interprets it. That division is deliberate and load-bearing.
+Review staged changes:
 
-**Run it using your strongest model.** The judgment NeatCode asks for, architecture
-conformance, earnedness, whether that `ProviderManager` already has a twin three files
-over, requires holding the actual repository in view, not just the diff in front of you.
-A weaker model will pattern-match against the patch and produce exactly the plausible,
-locally-correct code slop this skill exists to catch. The envelope hands the model the
-context it needs; a small model still won't reason across it the way this requires. This
-is not a place to economize.
+```bash
+git add -A
 
-**No source-file stamps.** NeatCode never writes marker comments into your codebase. Comment
-stamps are exactly the ceremonial noise it reports as a finding. The record lives in the
-completion block and, for durable facts, in `engineering.md`.
+neatcode envelope \
+  --staged \
+  --verb review \
+  --verify "npm test"
+```
 
-**No variety rule.** Consistency *is* the quality in a codebase. Any instinct to "do it
-differently this time" is a bug in the agent, not a feature of the skill.
+Then tell your agent:
 
-**Style is not a defect.** If a linter runs in CI, the linter owns it. A skill that reports
-formatting as a finding trains its users to ignore its findings.
+```text
+neatcode review the staged changes
+```
+
+Or study a repository before asking an agent to make a larger change:
+
+```bash
+neatcode envelope --repo --verb study --json
+```
+
+Then:
+
+```text
+neatcode study this repository
+```
+
+Worked examples are available in:
+
+* [`docs/recipes.md`](docs/recipes.md)
+* [`docs/study-examples.md`](docs/study-examples.md)
+
+---
+
+## The skill holds judgment; the harness holds evidence
+
+This separation is deliberate.
+
+```text
+repository
+    ↓
+NeatCode CLI
+acquire + structure evidence
+    ↓
+change envelope
+    ↓
+NeatCode skill
+engineering judgment
+    ↓
+finding / correction / verification requirement
+```
+
+The CLI should not gradually become a hidden rules engine attempting to encode engineering taste procedurally.
+
+The skill should not pretend that a model's recollection of running a command is equivalent to machine-captured evidence.
+
+Each side does the job it is better suited to do.
+
+---
+
+## Use a model capable of repository-level reasoning
+
+NeatCode asks the model to reason beyond the visible patch.
+
+It may need to relate:
+
+```text
+the requested change
+the diff
+repository instructions
+architecture
+callers
+dependencies
+tests
+neighboring implementations
+operational behavior
+```
+
+A model that only pattern-matches against the current diff can reproduce the exact failure NeatCode exists to catch: locally plausible advice with weak repository grounding.
+
+For consequential reviews, use a model capable of holding the relevant repository structure and evidence together.
+
+The envelope can provide the context.
+
+It cannot make a model reason well about that context.
+
+---
+
+## Repository consistency is usually a feature
+
+Design work often rewards novelty.
+
+Software repositories usually do not.
+
+If the codebase has one established way to model errors, one naming convention, one dependency-injection pattern, and one authority boundary, an agent should need a concrete reason to introduce another.
+
+NeatCode therefore does not contain a "variety" objective.
+
+Different is not automatically better.
+
+Consistency lowers the amount every future human and agent has to rediscover.
+
+---
+
+## Style belongs to style tools
+
+NeatCode is not interested in becoming a second linter.
+
+If formatting is enforced by:
+
+```text
+rustfmt
+prettier
+black
+eslint
+ruff
+```
+
+let those tools own it.
+
+An engineering skill that floods review output with formatting comments trains users to ignore the findings that actually require judgment.
+
+NeatCode focuses on structure, behavior, evidence, and operational credibility.
+
+---
+
+## No source-file stamps
+
+NeatCode does not add comments such as:
+
+```text
+// Reviewed by NeatCode
+```
+
+to source files.
+
+A marker does not make code correct.
+
+It also becomes stale the moment the code changes.
+
+Review results belong in review output.
+
+Durable repository knowledge belongs in appropriate engineering documentation such as `engineering.md`.
+
+The source should contain information the software itself needs.
+
+---
+
+## Where NeatCode fits
+
+NeatCode runs independently.
+
+You can use it with an ordinary coding agent without adopting anything else from GodSpeed AI.
+
+Within the broader GodSpeed architecture, NeatCode fits as a specialized SWE_SEED skill:
+
+```text
+SWE_SEED
+defines the software-work contract
+        ↓
+coding agent
+implements the change
+        ↓
+NeatCode
+examines and hardens the implementation
+        ↓
+proof
+shows what actually holds
+```
+
+SWE_SEED answers:
+
+> What artifact and proof does this software task require?
+
+NeatCode answers:
+
+> Is the implementation actually engineered well enough to deserve that proof?
+
+For longer work, Gauntlet can execute the route and invoke NeatCode where engineering judgment is needed.
+
+Those integrations are optional.
+
+---
+
+## What NeatCode is not
+
+NeatCode is not a formatter.
+
+It is not a linter.
+
+It is not a static analyzer.
+
+It is not a test runner.
+
+It is not a generic code-review persona.
+
+It is not a license to rewrite working code until it matches someone's preferred architecture.
+
+It is not a complexity-minimization contest.
+
+It is not an automatic claim that existing repository patterns are correct.
+
+It is not a replacement for deterministic verification.
+
+NeatCode is an engineering-hardening skill.
+
+Its job is to help distinguish:
+
+```text
+code that looks finished
+```
+
+from:
+
+```text
+code whose structure, behavior, evidence,
+and failure handling justify treating it as finished
+```
 
 ---
 
 ## Derivation
 
-NeatCode is derived from [Hallmark](https://github.com/Nutlope/hallmark), an anti-AI-slop
-*design* skill by Together AI, released under the MIT License. It keeps Hallmark's
-architecture: a natural-language kernel, progressively-loaded references, verb dispatch, a
-pre-emit critique, and gate-based quality checks, and replaces the subject matter entirely.
-Design judgment becomes engineering judgment.
+NeatCode is derived from [Hallmark](https://github.com/Nutlope/hallmark), an anti-AI-slop design skill by Together AI, released under the MIT License.
 
-Two mechanisms were deliberately **inverted** rather than translated, and the reasoning is
-worth stating because it is the sharpest difference between the two products:
+It retains Hallmark's general architecture:
 
-- **Theme rotation → profile inheritance.** Hallmark rotates its visual fingerprint so two
-  pages do not look alike. Code must not vary to avoid repetition; a codebase that varies for
-  variety's sake is unlearnable.
-- **CSS stamps → report blocks.** Hallmark stamps its output. A code skill that wrote marker
-  comments into source files would be emitting the exact debt it exists to catch.
+```text
+natural-language kernel
+progressively loaded references
+verb dispatch
+pre-emit critique
+gate-based quality checks
+```
 
+The subject matter changes from design judgment to software-engineering judgment.
+
+Two mechanisms are deliberately inverted.
+
+### Theme rotation becomes profile inheritance
+
+Hallmark benefits from visual variation.
+
+Repositories generally benefit from the opposite.
+
+A codebase should not invent a new architectural dialect merely because the agent can.
+
+NeatCode learns and inherits the repository's engineering profile unless a real constraint earns a deviation.
+
+### Output stamps become review records
+
+Hallmark can stamp generated design output.
+
+NeatCode does not stamp application source code.
+
+A comment claiming that code was reviewed is not evidence that the current version remains reviewed.
+
+The review belongs in the review record.
 
 ---
 
-## Licence
+## The short version
 
-MIT. Use it, fork it, ship it. See [`LICENSE`](LICENSE) for the retained upstream notice.
+AI made code generation cheap.
+
+It did not make repository understanding, architectural judgment, failure design, or proof cheap.
+
+NeatCode works on that remaining gap.
+
+Understand the repository before changing it.
+
+Make new complexity earn its cost.
+
+Keep authority singular where it should be singular.
+
+Test the consequential behavior, not the implementation's favorite story about itself.
+
+Treat failure paths as part of the feature.
+
+Run the checks you claim you ran.
+
+Say what remains unknown.
+
+Turn plausible code into engineered code.
+
+---
+
+## License
+
+MIT.
+
+Use it, fork it, ship it.
+
+See [`LICENSE`](LICENSE) for the retained upstream notice.
