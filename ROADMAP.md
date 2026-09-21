@@ -6,11 +6,18 @@ What's next.
 
 ## Now
 
-**Language-specific overlays.** The taxonomy is language-agnostic by design, which costs
+**Language-specific overlays.** ~~The taxonomy is language-agnostic by design, which costs
 precision. A thin overlay per ecosystem — Rust ownership and `unwrap` discipline, Go error
 wrapping and goroutine lifetime, Python mutable defaults and async gotchas, TypeScript
 structural-typing escapes and `any` leakage — loaded only when the changed files are in that
-language. Overlays add signals and exceptions; they do not add new families.
+language. Overlays add signals and exceptions; they do not add new families.~~
+
+Done: deterministic guard subsystem (`neatcode guard`,
+`lib/guards/`, `guards/`) covering JavaScript/TypeScript, Python, Go, and
+Rust, plus machine capability inventory (`neatcode environment`, `lib/env/`).
+Remaining: per-ecosystem *judgment* overlays in the skill references (e.g.
+goroutine lifetime, ownership discipline) — the detectors establish patterns,
+the skill still needs ecosystem-specific consequence guidance.
 
 ---
 

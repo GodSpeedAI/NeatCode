@@ -22,6 +22,8 @@ This map catalogues the complete NeatCode technical knowledge system. It organiz
 | [`docs/subsystems/skill-kernel.md`](docs/subsystems/skill-kernel.md) | Reference / Architecture | Natural language skill mechanics | Evaluates `SKILL.md`, verb dispatch, depth ladder, reference loading engine, and default flow. | [`docs/mental-model.md`](docs/mental-model.md) | Subsystem guides |
 | [`docs/subsystems/phenotype-engine.md`](docs/subsystems/phenotype-engine.md) | Reference / Architecture | Conformance protocol mechanics | 5-step conformance verification protocol, genotype extraction, import inspection, and 6 verdicts. | [`docs/mental-model.md`](docs/mental-model.md) | [`docs/workflows/audit-workflow.md`](docs/workflows/audit-workflow.md) |
 | [`docs/subsystems/taxonomy-and-gates.md`](docs/subsystems/taxonomy-and-gates.md) | Reference / Architecture | Failure categorization & quality gates | 14 failure families, 52 pre-completion gates in 8 groups, and 6-axis scoring evaluation engine. | [`docs/mental-model.md`](docs/mental-model.md) | [`docs/reference/taxonomy-catalog.md`](docs/reference/taxonomy-catalog.md) |
+| [`docs/subsystems/deterministic-guards.md`](docs/subsystems/deterministic-guards.md) | Reference / Architecture | Syntactic anti-slop analysis & diff-baselining | Mechanical rule enforcement for JS/TS, Python, Go, and Rust via masked source and diff-relative provenance. | [`architecture.md`](architecture.md) | [`docs/reference/cli.md`](docs/reference/cli.md), [`skills/neatcode/references/guards.md`](skills/neatcode/references/guards.md) |
+| [`docs/subsystems/environment-inventory.md`](docs/subsystems/environment-inventory.md) | Reference / Architecture | Machine & agent capability discovery | Discovery of installed agents, active executor, MCP services with secret redaction, and local toolchains. | [`architecture.md`](architecture.md) | [`docs/reference/cli.md`](docs/reference/cli.md), [`skills/neatcode/references/environment.md`](skills/neatcode/references/environment.md) |
 | **Workflows** | | | | | |
 | [`docs/workflows/envelope-acquisition.md`](docs/workflows/envelope-acquisition.md) | Explanation / Workflow | End-to-end envelope creation trace | Step-by-step trace and sequence diagram for `neatcode envelope` from scope parsing to JSON/Markdown output. | [`docs/subsystems/envelope-engine.md`](docs/subsystems/envelope-engine.md) | [`docs/reference/cli.md`](docs/reference/cli.md) |
 | [`docs/workflows/check-discovery-run.md`](docs/workflows/check-discovery-run.md) | Explanation / Workflow | Verification discovery and execution | Execution trace of `neatcode checks` and `--verify` command execution, timeout handling, and condensing. | [`docs/subsystems/envelope-engine.md`](docs/subsystems/envelope-engine.md) | [`docs/reference/cli.md`](docs/reference/cli.md) |
@@ -41,6 +43,8 @@ This map catalogues the complete NeatCode technical knowledge system. It organiz
 | [`docs/how-to/add-verification-source.md`](docs/how-to/add-verification-source.md) | How-To | Practical extension | Step-by-step procedure for adding build manifest discovery and default test commands to `lib/verify.mjs`. | [`docs/subsystems/envelope-engine.md`](docs/subsystems/envelope-engine.md) | [`docs/reference/cli.md`](docs/reference/cli.md) |
 | [`docs/how-to/integrate-ci.md`](docs/how-to/integrate-ci.md) | How-To | CI/CD automation | Integrating `neatcode envelope` into GitHub Actions or GitLab CI to generate PR review envelopes. | [`docs/getting-started.md`](docs/getting-started.md) | [`docs/reference/cli.md`](docs/reference/cli.md) |
 | [`docs/how-to/generate-engineering-md.md`](docs/how-to/generate-engineering-md.md) | How-To | Repository profiling | Extracting repository engineering DNA, tagging claims with provenance, and maintaining `engineering.md`. | [`docs/workflows/study-workflow.md`](docs/workflows/study-workflow.md) | [`docs/study-examples.md`](docs/study-examples.md) |
+| [`docs/how-to/run-deterministic-guards.md`](docs/how-to/run-deterministic-guards.md) | How-To | Anti-slop enforcement | Running deterministic guards standalone, across commit baselines, or integrated into PR envelopes. | [`docs/getting-started.md`](docs/getting-started.md) | [`docs/subsystems/deterministic-guards.md`](docs/subsystems/deterministic-guards.md) |
+| [`docs/how-to/inventory-agent-environment.md`](docs/how-to/inventory-agent-environment.md) | How-To | Environment auditing | Inspecting active agents, configured MCP server transports with secret redaction, and toolchains. | [`docs/getting-started.md`](docs/getting-started.md) | [`docs/subsystems/environment-inventory.md`](docs/subsystems/environment-inventory.md) |
 | **Reference** | | | | | |
 | [`docs/reference/cli.md`](docs/reference/cli.md) | Reference | Formal syntax & flags | Formal specification of CLI commands (`envelope`, `checks`), flags, argument parsing, and exit codes. | None | [`docs/subsystems/cli-and-harness.md`](docs/subsystems/cli-and-harness.md) |
 | [`docs/reference/envelope-schema.md`](docs/reference/envelope-schema.md) | Reference | Schema specification | Change Envelope JSON v1 specification, field definitions, type constraints, and validation rules. | None | [`docs/subsystems/envelope-engine.md`](docs/subsystems/envelope-engine.md) |
@@ -57,6 +61,11 @@ This map catalogues the complete NeatCode technical knowledge system. It organiz
 3. Check [`docs/recipes.md`](docs/recipes.md) for real worked prompts
 4. Reference [`docs/reference/cli.md`](docs/reference/cli.md) for flag options
 
+### "I want to run anti-slop guards and check environment capabilities"
+1. Read [`docs/how-to/run-deterministic-guards.md`](docs/how-to/run-deterministic-guards.md) (Guards How-To)
+2. Read [`docs/how-to/inventory-agent-environment.md`](docs/how-to/inventory-agent-environment.md) (Environment How-To)
+3. Consult [`docs/subsystems/deterministic-guards.md`](docs/subsystems/deterministic-guards.md) and [`docs/subsystems/environment-inventory.md`](docs/subsystems/environment-inventory.md)
+
 ### "I want to understand the architecture and how it works"
 1. Read [`docs/mental-model.md`](docs/mental-model.md) (Concept)
 2. Study [`architecture.md`](architecture.md) (System Architecture)
@@ -66,8 +75,9 @@ This map catalogues the complete NeatCode technical knowledge system. It organiz
 ### "I want to extend or modify the harness"
 1. Read [`docs/subsystems/envelope-engine.md`](docs/subsystems/envelope-engine.md)
 2. Follow [`docs/how-to/add-language-context.md`](docs/how-to/add-language-context.md) or [`docs/how-to/add-verification-source.md`](docs/how-to/add-verification-source.md)
-3. Consult [`source-map.md`](source-map.md) for exact symbols
-4. Run `npm test` to verify suite integrity
+3. For guards: read the detector headers in [`lib/guards/`](lib/guards/) (each documents its precision limits) and the provenance in [`guards/*/UPSTREAM.md`](guards/js-ts/UPSTREAM.md); for environment inventory: [`lib/env/`](lib/env/) plus [`lib/env/upstream/UPSTREAM.md`](lib/env/upstream/UPSTREAM.md); record third-party changes in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)
+4. Consult [`source-map.md`](source-map.md) for exact symbols
+5. Run `npm test` to verify suite integrity
 
 ### "I am debugging an unexpected harness failure"
 1. Check [`docs/troubleshooting.md`](docs/troubleshooting.md)

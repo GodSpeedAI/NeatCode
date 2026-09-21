@@ -61,7 +61,7 @@ test('package metadata points at files that exist', () => {
 });
 
 test('published package contents include the skill and the harness', () => {
-  for (const dir of ['skills', 'bin', 'lib']) {
+  for (const dir of ['skills', 'bin', 'lib', 'guards']) {
     assert.ok(pkg.files.includes(dir), `package.files must include ${dir}`);
     assert.ok(existsSync(join(ROOT, dir)), `${dir}/ missing`);
   }
@@ -228,7 +228,7 @@ test('no stale product name survives outside attribution and history', () => {
 test('documented commands match the CLI surface', () => {
   const cli = readFileSync(join(ROOT, 'bin', 'neatcode.mjs'), 'utf8');
   const flags = new Set([...cli.matchAll(/case '(--[a-z-]+)'/g)].map((m) => m[1]));
-  const commands = new Set([...cli.matchAll(/case '(envelope|checks)'/g)].map((m) => m[1]));
+  const commands = new Set([...cli.matchAll(/case '(envelope|checks|guard|environment)'/g)].map((m) => m[1]));
 
   const docs = [
     SKILL,

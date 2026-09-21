@@ -5,14 +5,14 @@ The **CLI and Harness** subsystem provides the command-line boundary and executi
 ---
 
 ## Purpose
-The CLI exists to provide a zero-dependency, deterministic terminal interface for acquiring repository evidence and discovering verification proof without embedding evaluation opinions.
+The CLI exists to provide a zero-dependency, deterministic terminal interface for acquiring repository evidence, discovering verification proof, running deterministic anti-slop guards, and inventorying machine capabilities without embedding evaluation opinions.
 
 ---
 
 ## Responsibilities
-- **Argument Parsing**: Tokenizes CLI flags, scope modes, verification commands, and output formats.
-- **Process Orchestration**: Invokes `buildEnvelope()` or `discoverChecks()` based on user subcommands.
-- **Serialization**: Emits validated Markdown or JSON envelopes to standard output.
+- **Argument Parsing**: Tokenizes CLI flags, scope modes, verification commands, guard options, environment options, and output formats.
+- **Process Orchestration**: Invokes `buildEnvelope()`, `discoverChecks()`, `runGuards()`, or `collectEnvironment()` based on user subcommands.
+- **Serialization**: Emits validated Markdown or JSON envelopes, formatted guard findings, or environment inventories to standard output.
 - **Exit Code Management**: Translates execution results into standardized exit codes (`0`, `1`, `2`).
 
 ---
@@ -34,6 +34,8 @@ graph TD
     CLI --> EnvBuild["lib/envelope.mjs (buildEnvelope)"]
     CLI --> EnvVal["lib/envelope.mjs (validateEnvelope)"]
     CLI --> Checks["lib/verify.mjs (discoverChecks)"]
+    CLI --> Guards["lib/guards/index.mjs (runGuards)"]
+    CLI --> EnvInv["lib/env/index.mjs (collectEnvironment)"]
 ```
 
 ---
@@ -41,23 +43,30 @@ graph TD
 ## Core Abstractions
 
 ### `parseArgs(argv)`
-A custom, zero-dependency command-line argument tokenizer located at [`bin/neatcode.mjs:44-86`](../../bin/neatcode.mjs#L44-L86). It processes argv arrays sequentially and populates an options dictionary:
+A custom, zero-dependency command-line argument tokenizer located at [`bin/neatcode.mjs`](../../bin/neatcode.mjs). It processes argv arrays sequentially and populates an options dictionary:
 ```javascript
 const opts = {
-  command: null,                       // 'envelope' | 'checks'
+  command: null,                       // 'envelope' | 'checks' | 'guard' | 'environment'
   source: { mode: 'working-tree', paths: [] },
   verb: 'review',                      // review | audit | restructure | study | harden | build
   intent: null,
   verify: [],                          // Array of shell commands to execute
-  json: false,                         // Emit JSON vs Markdown
-  strict: false,                       // Non-zero exit on envelope problems
+  guards: false,                       // Include deterministic guard evidence in envelope
+  json: false,                         // Emit JSON vs human-readable text
+  strict: false,                       // Non-zero exit on problems or guard findings
   maxDiffBytes: undefined,
+  guardPaths: [],
+  guardLanguages: [],
+  guardAll: false,
+  staged: false,
+  baseline: null,
+  envSections: [],
 };
 ```
 
 ### Exit Codes
-- `0`: Successful execution with valid envelope output.
-- `1`: Subprocess error, unhandled exception, or strict validation failure (`--strict`).
+- `0`: Successful execution with valid output. For `guard`, findings are output, not failure: exit `0` means the scan completed cleanly.
+- `1`: Subprocess error, unhandled exception, strict validation failure (`--strict`), incomplete guard run (missing runtime or unparseable file), or `--strict` guard findings present.
 - `2`: Command-line usage error (unknown flag, missing flag argument, invalid subcommand).
 
 ---
@@ -67,7 +76,7 @@ const opts = {
 When invoked with `neatcode envelope [options]`:
 1. `parseArgs(process.argv.slice(2))` validates all flags.
 2. If `--stdin` is specified, `readStdin()` buffers file descriptor `0` via `readFileSync(0, 'utf8')`.
-3. `buildEnvelope()` is called with the resolved scope and options.
+3. `buildEnvelope()` is called with the resolved scope, verification commands, and optional `--guards` flag.
 4. `validateEnvelope()` performs structural sanity checks on the resulting object.
 5. If problems exist, warnings are printed to `process.stderr`.
 6. If `--strict` is set and problems were discovered, the process exits with code `1`.
@@ -77,6 +86,17 @@ When invoked with `neatcode checks`:
 1. Resolves repository root using `repoRoot(process.cwd())`.
 2. Calls `discoverChecks(root)`.
 3. Prints tab-delimited commands and sources (e.g. `npm run test\t(package.json)`).
+
+When invoked with `neatcode guard [options]`:
+1. Validates languages and resolves target paths and baseline revision (`--staged` or `--baseline <rev>`).
+2. Calls `runGuards({ root, paths, languages, baseline, includeGenerated, includeVendored })`.
+3. Formats output as human-readable text via `formatGuardsHuman()` or structured JSON.
+4. Exits with code `1` if execution failures occurred or if `--strict` was specified and findings exist; otherwise exits `0`.
+
+When invoked with `neatcode environment [options]`:
+1. Collects installed agents, current executor, MCP services, skill roots, and toolchains via `collectEnvironment()`.
+2. Formats output as human-readable text via `formatEnvironmentHuman()` or structured JSON.
+3. Exits with code `0`.
 
 ---
 
@@ -88,18 +108,19 @@ The CLI subsystem is strictly **stateless**. It reads the local filesystem and e
 ## Failure Modes
 - **Unknown Option**: Throws an error (`unknown option: --foo`) and exits with code `2`.
 - **Missing Required Argument**: `need(rest, flag)` detects missing parameters and exits with code `2`.
-- **Validation Failure with `--strict`**: Returns exit code `1` if structural errors occur during envelope assembly.
+- **Validation Failure with `--strict`**: Returns exit code `1` if structural errors occur during envelope assembly or if guard findings are detected under `--strict`.
 
 ---
 
 ## Extension Points
-- **New CLI Flags**: Add flag cases in [`bin/neatcode.mjs:58-84`](../../bin/neatcode.mjs#L58-L84).
-- **New Output Formats**: Extend serialization logic in [`bin/neatcode.mjs:149`](../../bin/neatcode.mjs#L149).
+- **New CLI Flags**: Add flag cases in [`bin/neatcode.mjs`](../../bin/neatcode.mjs).
+- **New Output Formats**: Extend serialization logic in [`bin/neatcode.mjs`](../../bin/neatcode.mjs).
 
 ---
 
 ## Source Trail
-- [`bin/neatcode.mjs:10-42`](../../bin/neatcode.mjs#L10-L42) — CLI version and help documentation constants.
-- [`bin/neatcode.mjs:44-86`](../../bin/neatcode.mjs#L44-L86) — `parseArgs()` implementation.
-- [`bin/neatcode.mjs:101-155`](../../bin/neatcode.mjs#L101-L155) — `main()` execution coordinator.
-- [`test/envelope.test.mjs:159-181`](../../test/envelope.test.mjs#L159-L181) — CLI integration test specs.
+- [`bin/neatcode.mjs`](../../bin/neatcode.mjs) — CLI entrypoint, flag parsing, and execution routing.
+- [`lib/guards/index.mjs`](../../lib/guards/index.mjs) — Guard orchestration entrypoint.
+- [`lib/env/index.mjs`](../../lib/env/index.mjs) — Environment capability inventory entrypoint.
+- [`test/envelope.test.mjs`](../../test/envelope.test.mjs) — CLI integration test specs.
+

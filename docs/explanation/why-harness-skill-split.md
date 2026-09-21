@@ -17,6 +17,8 @@ This document records the design constraints, evaluated trade-offs, and rejected
 │   • Discovers manifests & instructions│
 │   • Scans local imports & callers     │
 │   • Executes test commands            │
+│   • Runs deterministic anti-slop guards│
+│   • Inventories machine capabilities  │
 │   • Validates schema structure        │
 │                                       │
 │   NO JUDGMENT · NO EVALUATION         │
@@ -32,6 +34,7 @@ This document records the design constraints, evaluated trade-offs, and rejected
 │   • Discovers duplicated authority    │
 │   • Evaluates 52 pre-completion gates │
 │   • Scores critique axes              │
+│   • Evaluates guard findings in ctx   │
 │                                       │
 │   NO UNVERIFIED CLAIMS · EVALUATION   │
 └───────────────────────────────────────┘

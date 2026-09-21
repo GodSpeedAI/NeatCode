@@ -9,10 +9,12 @@ This document establishes concrete, line-traceable connections between architect
 | Capability / Concept | Source Artifact | Symbol / Function | Description |
 | :--- | :--- | :--- | :--- |
 | CLI Entrypoint | [`bin/neatcode.mjs:1-9`](bin/neatcode.mjs#L1-L9) | Shebang & ESM imports | Shell executable entry point. |
-| CLI Argument Parsing | [`bin/neatcode.mjs:44-86`](bin/neatcode.mjs#L44-L86) | `parseArgs(argv)` | Custom, zero-dependency flag tokenizer supporting scope modes, options, and verbs. |
-| Positional Flag Validator | [`bin/neatcode.mjs:88-91`](bin/neatcode.mjs#L88-L91) | `need(rest, flag)` | Ensures values follow options requiring arguments. |
-| Stdin Diff Reader | [`bin/neatcode.mjs:93-99`](bin/neatcode.mjs#L93-L99) | `readStdin()` | Synchronously buffers piped unified diffs from stdin descriptor `0`. |
-| CLI Main Controller | [`bin/neatcode.mjs:101-155`](bin/neatcode.mjs#L101-L155) | `main(argv)` | Routes `envelope` vs `checks`, handles `--json`, `--strict`, and sets exit codes. |
+| CLI Argument Parsing | [`bin/neatcode.mjs`](bin/neatcode.mjs) | `parseArgs(argv)` | Custom, zero-dependency flag tokenizer supporting scope modes, options, verbs, guard flags, and environment flags. |
+| Positional Flag Validator | [`bin/neatcode.mjs`](bin/neatcode.mjs) | `need(rest, flag)` | Ensures values follow options requiring arguments. |
+| Stdin Diff Reader | [`bin/neatcode.mjs`](bin/neatcode.mjs) | `readStdin()` | Synchronously buffers piped unified diffs from stdin descriptor `0`. |
+| CLI Main Controller | [`bin/neatcode.mjs`](bin/neatcode.mjs) | `main(argv)` | Routes `envelope` vs `checks` vs `guard` vs `environment`, handles `--json`, `--strict`, and sets exit codes. |
+| Guard Command Runner | [`bin/neatcode.mjs`](bin/neatcode.mjs) | `runGuardCommand(opts)` | Validates languages, resolves baseline/diff source, emits guard results. |
+| Environment Command Runner | [`bin/neatcode.mjs`](bin/neatcode.mjs) | `runEnvironmentCommand(opts)` | Resolves project root, collects and emits the capability inventory. |
 
 ---
 
@@ -38,6 +40,7 @@ This document establishes concrete, line-traceable connections between architect
 | Range Parser | [`lib/git.mjs:105-113`](lib/git.mjs#L105-L113) | `parseRange(range)` | Differentiates two-dot (`..`) vs three-dot (`...`) symmetric branch ranges. |
 | Tracked Files Listing | [`lib/git.mjs:116-119`](lib/git.mjs#L116-L119) | `trackedFiles(cwd)` | NUL-delimited list of all tracked repository paths (`git ls-files -z`). |
 | Working Tree Status | [`lib/git.mjs:122-136`](lib/git.mjs#L122-L136) | `workingTreeStatus(cwd)` | Porcelain status parser detecting uncommitted or untracked changes. |
+| Baseline File Reader | [`lib/git.mjs`](lib/git.mjs) | `showFile(rev, path, cwd)` | File content at a revision (or null); feeds guard baseline scans. |
 
 ### Diff and Path Morphology (`lib/diff.mjs`)
 | Capability / Concept | Source Artifact | Symbol / Function | Description |
@@ -75,6 +78,37 @@ This document establishes concrete, line-traceable connections between architect
 
 ---
 
+## 2b. Deterministic Guard Subsystem (`lib/guards/`, `guards/`)
+
+| Capability / Concept | Source Artifact | Symbol / Function | Description |
+| :--- | :--- | :--- | :--- |
+| Guard Taxonomy | [`lib/guards/taxonomy.mjs`](lib/guards/taxonomy.mjs) | `FAMILIES` | Language-independent finding families; one concept, one authority. |
+| Finding Model | [`lib/guards/model.mjs`](lib/guards/model.mjs) | `makeFinding`, `validateFinding`, `summarizeFindings` | Unified result contract with upstream provenance. |
+| File Discovery & Routing | [`lib/guards/dispatch.mjs`](lib/guards/dispatch.mjs) | `collectGuardFiles`, `analyzeCollected` | Extension routing, generated/vendored exclusions, per-language execution. |
+| Baseline Classification | [`lib/guards/diffclass.mjs`](lib/guards/diffclass.mjs) | `classifyFindings` | Labels findings introduced/worsened/exposed/pre-existing/resolved. |
+| Guard Orchestration | [`lib/guards/index.mjs`](lib/guards/index.mjs) | `runGuards`, `formatGuardsHuman` | Public entry for the CLI and the envelope; human/JSON rendering. |
+| JS/TS Detectors | [`lib/guards/javascript.mjs`](lib/guards/javascript.mjs) | `analyzeJavaScript` | Syntactic detectors adapted from `guards/js-ts/upstream/`. |
+| Python Engine Adapter | [`lib/guards/python.mjs`](lib/guards/python.mjs) | `analyzePythonFiles` | Executes vendored `anti_slop` via system python3; normalizes JSON. |
+| Go Detectors | [`lib/guards/go.mjs`](lib/guards/go.mjs) | `analyzeGo` | Syntactic detectors adapted from `guards/go/upstream/` (G01–G08, G10, G11, G13). |
+| Rust Policy | [`lib/guards/rust.mjs`](lib/guards/rust.mjs) | `analyzeRust` | Nine NeatCode-owned rules; see `guards/rust/UPSTREAM.md`. |
+| Masked-Source Scanning | [`lib/guards/scan.mjs`](lib/guards/scan.mjs) | `maskSource`, `functionRanges` | Comment/string masking preserving positions; approximate function ranges. |
+
+## 2c. Environment Inventory Subsystem (`lib/env/`)
+
+| Capability / Concept | Source Artifact | Symbol / Function | Description |
+| :--- | :--- | :--- | :--- |
+| Inventory Orchestration | [`lib/env/index.mjs`](lib/env/index.mjs) | `collectEnvironment`, `formatEnvironmentHuman` | Public entry for the CLI; section selection; human/JSON rendering. |
+| Agent Discovery | [`lib/env/detect.mjs`](lib/env/detect.mjs) | `discoverAgents`, `deriveStatus` | Independent evidence per agent; absent→active status derivation. |
+| Current Executor | [`lib/env/executor.mjs`](lib/env/executor.mjs) | `determineExecutor` | Env-signal detection from the vendored `detect-agents.json` spec. |
+| Agent Knowledge | [`lib/env/registry.mjs`](lib/env/registry.mjs) | `AGENT_KNOWLEDGE` | Curated executables and MCP locations over the upstream registry. |
+| Upstream Registry Port | [`lib/env/upstream-agents.mjs`](lib/env/upstream-agents.mjs) | `loadUpstreamAgents` | Mechanical port of `upstream/agents.registry.ts` (79 agents). |
+| MCP Services | [`lib/env/services.mjs`](lib/env/services.mjs) | `discoverServices`, `parseTomlSubset` | Config parsing, normalization, dedup, redaction. |
+| Skill Roots | [`lib/env/skills.mjs`](lib/env/skills.mjs) | `discoverSkills` | Universal + agent-specific roots with shared-location dedup. |
+| Toolchains | [`lib/env/tools.mjs`](lib/env/tools.mjs) | `discoverTools` | Runtime probes, guard-engine runnability, declared checks. |
+| Secret Redaction | [`lib/env/redact.mjs`](lib/env/redact.mjs) | `redactConfig`, `redactScalar` | Single authority for secret handling; values never leave. |
+
+---
+
 ## 3. Skill Kernel and Natural Language References (`skills/neatcode/`)
 
 | Skill Component | File Path | Key Sections | Purpose |
@@ -92,6 +126,9 @@ This document establishes concrete, line-traceable connections between architect
 | Untrusted Input | [`skills/neatcode/references/untrusted-input.md`](skills/neatcode/references/untrusted-input.md) | Prompt injection defense, Secret handling | Treats repository text as untrusted evidence, not instruction. |
 | Engineering Artifact | [`skills/neatcode/references/engineering-md.md`](skills/neatcode/references/engineering-md.md) | Provenance tags (`explicit`, `observed`, etc.) | Structure and authoring rules for `engineering.md`. |
 | Failure Taxonomy | [`skills/neatcode/references/taxonomy.md`](skills/neatcode/references/taxonomy.md) | Fast routing table, 14 families | Index and routing table for named failure modes. |
+| Deterministic Guards | [`skills/neatcode/references/guards.md`](skills/neatcode/references/guards.md) | Baseline/diff-scoped runs, finding judgment | When to run guards and how to judge a finding. |
+| Ecosystem Overlays | [`skills/neatcode/references/ecosystems/`](skills/neatcode/references/ecosystems/typescript.md) | Per-language consequence guidance (typescript, python, go, rust) | Turns a guard finding into a repository judgment at critique time. |
+| Environment Inventory | [`skills/neatcode/references/environment.md`](skills/neatcode/references/environment.md) | Orientation use, status reading, earnedness | Consulting local capability without mandating it. |
 
 ---
 
@@ -102,3 +139,10 @@ This document establishes concrete, line-traceable connections between architect
 | [`test/diff.test.mjs`](test/diff.test.mjs) | `lib/diff.mjs` | Unified diff parsing, hunk calculation, line additions/deletions, path classification, change summaries. |
 | [`test/envelope.test.mjs`](test/envelope.test.mjs) | `lib/envelope.mjs`, `bin/neatcode.mjs` | Multi-scope envelope creation (`staged`, `commit`, `range`, `paths`), validation rules, check recording, CLI stdout (Markdown/JSON). |
 | [`test/skill-integrity.test.mjs`](test/skill-integrity.test.mjs) | Repository & Skill Integrity | Package metadata, link graph resolution, reference reachability from `SKILL.md`, CLI flags matching documented commands, 6 critique axes exact matching. |
+| [`test/guards-javascript.test.mjs`](test/guards-javascript.test.mjs) | `lib/guards/javascript.mjs` | Ported JS/TS rule contracts: positives, near-neighbor negatives, position stability. |
+| [`test/guards-python.test.mjs`](test/guards-python.test.mjs) | `lib/guards/python.mjs` | Vendored engine delegation: normalization, family mapping, failure honesty. |
+| [`test/guards-go.test.mjs`](test/guards-go.test.mjs) | `lib/guards/go.mjs` | Ported Go rule contracts (G01–G08, G10, G11, G13) with justification exemptions. |
+| [`test/guards-rust.test.mjs`](test/guards-rust.test.mjs) | `lib/guards/rust.mjs` | Every NeatCode-owned Rust rule: violation plus legitimate near-neighbor. |
+| [`test/guards-orchestration.test.mjs`](test/guards-orchestration.test.mjs) | `lib/guards/` orchestration | Mixed-language runs, exclusions, JSON stability, introduced vs pre-existing. |
+| [`test/env-discovery.test.mjs`](test/env-discovery.test.mjs) | `lib/env/detect.mjs`, `executor.mjs`, `skills.mjs` | Agent evidence statuses, executor signals, skills dedup. |
+| [`test/env-services.test.mjs`](test/env-services.test.mjs) | `lib/env/services.mjs`, `redact.mjs` | Multi-client dedup, scopes, transports, malformed configs, secret redaction. |

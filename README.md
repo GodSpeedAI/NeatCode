@@ -142,7 +142,7 @@ It can be:
 * comments explaining complexity that should not exist
 * "production-ready" code with no operational path through failure
 
-A linter cannot decide most of those questions.
+A conventional linter cannot decide most of those questions.
 
 Neither can formatting.
 
@@ -367,6 +367,19 @@ Ask what verification the repository already declares:
 
 ```bash
 neatcode checks
+```
+
+Run the deterministic guard layer over a change:
+
+```bash
+neatcode guard --staged
+```
+
+Ask what the machine can actually do — installed agents, MCP services,
+skill roots, toolchains:
+
+```bash
+neatcode environment
 ```
 
 The harness gathers and structures evidence.
@@ -786,6 +799,18 @@ Use the security scanner.
 
 Use the schema validator.
 
+And use NeatCode's own deterministic guards where they apply:
+
+```bash
+neatcode guard --staged
+neatcode guard --paths src --language rust --json
+```
+
+They inspect JavaScript/TypeScript, Python, Go, and Rust for evidence-loss
+patterns — widened-then-asserted types, unjustified escape hatches, untyped
+contracts, erased evidence — through one interface, with findings labeled
+introduced, worsened, exposed, pre-existing, or resolved against a baseline.
+
 NeatCode is useful around the questions those tools cannot decide alone:
 
 ```text
@@ -1021,8 +1046,9 @@ repository
     ↓
 NeatCode CLI
 acquire + structure evidence
+(envelope · guards · environment)
     ↓
-change envelope
+change envelope (+ guard findings, when requested)
     ↓
 NeatCode skill
 engineering judgment
@@ -1031,6 +1057,10 @@ finding / correction / verification requirement
 ```
 
 The CLI should not gradually become a hidden rules engine attempting to encode engineering taste procedurally.
+
+Guard findings are mechanically provable signals — this pattern exists at
+this line — not verdicts about whether the code is good. The skill decides
+severity, attribution, and remediation.
 
 The skill should not pretend that a model's recollection of running a command is equivalent to machine-captured evidence.
 
@@ -1183,6 +1213,11 @@ It is not an automatic claim that existing repository patterns are correct.
 It is not a replacement for deterministic verification.
 
 NeatCode is an engineering-hardening skill.
+
+It does ship deterministic guard analysis — for JavaScript/TypeScript,
+Python, Go, and Rust — but as evidence feeding judgment, not as the
+judgment itself. A guard finding says a pattern exists; NeatCode decides
+what it means in this repository.
 
 Its job is to help distinguish:
 

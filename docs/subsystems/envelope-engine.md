@@ -36,6 +36,7 @@ graph TD
     BuildEnv --> Repo["repo.mjs (collectRepository)"]
     BuildEnv --> Context["context.mjs (expandContext)"]
     BuildEnv --> Verify["verify.mjs (discoverChecks, runChecks)"]
+    BuildEnv --> Guards["lib/guards/index.mjs (runGuards, optional)"]
     BuildEnv --> Validate["envelope.mjs (validateEnvelope)"]
 ```
 
@@ -53,7 +54,8 @@ export function buildEnvelope(options = {}) {
   // 4. Collect repository morphology, manifests, instructions, and size outliers
   // 5. Expand one context ring per changed path
   // 6. Discover declared checks and execute requested verification commands
-  // 7. Assemble and return Envelope v1 object
+  // 7. If options.guards is true, run deterministic guards against baseline
+  // 8. Assemble and return Envelope v1 object
 }
 ```
 
@@ -65,6 +67,8 @@ Located in [`lib/envelope.mjs:118-159`](../../lib/envelope.mjs#L118-L159). The d
 - Validates file statuses (`added`, `modified`, `deleted`, `renamed`, `copied`).
 - Asserts that diff text parsed to files (preventing silent acquisition failures).
 - Checks status validity of verification runs (`passed`, `failed`, `timeout`, `not-run`).
+- Verifies that `guards.ran` is a boolean, and when true, `guards.findings` is an array.
+- Enforces that `guards.clean` is false whenever any findings or execution failures exist.
 
 ### Path Classification (`classifyPath(path)`)
 Located in [`lib/diff.mjs:22-29`](../../lib/diff.mjs#L22-L29). Classifies paths into six functional kinds:
@@ -85,6 +89,13 @@ Located in [`lib/context.mjs:110-127`](../../lib/context.mjs#L110-L127). For eac
 2. **Local Imports**: Regex-scans import statements (`import ... from './...'`, `require()`, `from . import`, `use crate::`) and resolves targets against tracked repository files via [`localImports()`](../../lib/context.mjs#L40-L62).
 3. **Discoverable Callers**: Searches tracked source files for occurrences of the module's basename stem via [`likelyCallers()`](../../lib/context.mjs#L79-L93).
 4. **Related Tests**: Locates test files sharing the module's stem via [`relatedTests()`](../../lib/context.mjs#L96-L104).
+
+### Deterministic Guards Integration
+When `options.guards` is enabled (via CLI `--guards`):
+1. Collects non-generated modified paths matching supported languages.
+2. Derives baseline revision from scope (e.g. `HEAD` for staged/working-tree diffs, or `base` revision for commit/range scopes).
+3. Executes `runGuards({ root, paths: changedPaths, baseline })`.
+4. Embeds the normalized result into `envelope.guards` and renders a dedicated `## Deterministic Guards` section in Markdown envelopes.
 
 ---
 
@@ -114,3 +125,4 @@ The engine is stateless. It reads working tree state and temporary Git stdout bu
 - [`lib/repo.mjs`](../../lib/repo.mjs) — Repository morphology, manifests, instructions, and workspace detection.
 - [`lib/context.mjs`](../../lib/context.mjs) — Bounded context ring resolution.
 - [`lib/verify.mjs`](../../lib/verify.mjs) — Verification runner and command discovery.
+- [`lib/guards/index.mjs`](../../lib/guards/index.mjs) — Deterministic guards orchestration.

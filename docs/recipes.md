@@ -203,6 +203,67 @@ calculation, and the review in recipe 00 finds it a week later.
 
 ---
 
+## 06 · Run deterministic anti-slop guards on staged changes
+
+**Setup:**
+
+```bash
+git add -A
+neatcode guard --staged
+```
+
+**Prompt:**
+
+> *"neatcode review the staged changes. I've already run deterministic guards."*
+
+**What happens.** The CLI harness runs syntactic detectors over staged JS/TS, Python, Go, and Rust files. It compares findings against the `HEAD` commit baseline and labels each finding `introduced`, `worsened`, `exposed`, `pre-existing`, or `resolved`. When the agent conducts its review, it reads the guard findings as objective facts, consults the corresponding ecosystem overlay, and focuses on semantic correctness rather than syntax hunting.
+
+**Excerpt:**
+
+```text
+Deterministic Guards · staged (baseline HEAD)
+  src/api/auth.ts:44:12 [introduced] neatcode/typescript/no-chained-type-assertions
+    chained type assertion (x as unknown as Session) launders types through an intermediate
+  src/services/data.py:88:5 [pre-existing] neatcode/python/no-swallowed-exceptions
+    swallowed exception without logging or re-raise
+
+1 introduced · 0 worsened · 0 exposed · 1 pre-existing · 0 resolved
+```
+
+---
+
+## 07 · Audit local agent environment & capabilities
+
+**Setup:**
+
+```bash
+neatcode environment
+```
+
+**Prompt:**
+
+> *"neatcode orient on this project and tell me what capabilities and tools we have locally."*
+
+**What happens.** The harness discovers the active executor, checks installed agents, audits configured MCP services across all clients (with passwords and tokens strictly redacted), locates universal and project skill roots, and probes developer toolchains. The agent uses this inventory during Step 0 to choose implementation strategies that match actual local tools rather than speculating.
+
+**Excerpt:**
+
+```text
+Environment Inventory
+  Active Executor: claude-code (environment: CLAUDE_CODE_ENTRYPOINT)
+  Installed Agents: 3 runnable, 1 configured, 75 candidates
+    claude-code (runnable: /usr/local/bin/claude)
+    cursor (runnable: /usr/local/bin/cursor)
+    codex (configured: ~/.codex/config.toml)
+  Agent Services (MCP): 2 servers discovered
+    postgres (stdio: npx -y @modelcontextprotocol/server-postgres)
+      clients: claude-code
+      env: DB_CONNECTION_STRING=[REDACTED]
+  Toolchains: node v20.11.0, git 2.43.0, python3 3.12.3, cargo 1.78.0
+```
+
+---
+
 ## Reading the reports
 
 - **Provenance labels** are only in `review`, because only a change has a relationship to a

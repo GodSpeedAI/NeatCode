@@ -35,17 +35,17 @@ Historically, Node.js CLI tools pulled in large third-party trees because the ru
 - **Rationale**: Any developer or CI environment using NeatCode already has Git installed. Spawning native Git directly guarantees 100% fidelity with the user's actual configuration, `.gitattributes`, credential helpers, and repository state. It eliminates thousands of lines of JavaScript Git reimplementation.
 
 ### 2. Rejection of Parser Generators (e.g. Babel, Tree-sitter)
-- **Trade-off**: Context expansion (`lib/context.mjs`) uses targeted regular expressions rather than an exact AST parser.
-- **Rationale**: An AST parser requires compiled native binaries (Tree-sitter) or massive language-specific AST packages that break across different ECMAScript, TypeScript, Python, or Rust versions. NeatCode's textual heuristics are fast, transparent, zero-install, and explicitly honest about being approximations.
+- **Trade-off**: Context expansion (`lib/context.mjs`) and syntactic guards (`lib/guards/`) use targeted regular expressions over masked source rather than exact AST parsers.
+- **Rationale**: An AST parser requires compiled native binaries (Tree-sitter) or massive language-specific AST packages that break across different ECMAScript, TypeScript, Python, or Rust versions. NeatCode's masked-source scanning (`lib/guards/scan.mjs`) blanks comments and string literals, providing clean syntax matching without false positives, while Python anti-slop executes through the system's existing `python3` standard library without npm or pip dependencies.
 
 ### 3. Rejection of CLI Frameworks (`commander`, `yargs`)
 - **Trade-off**: Hand-crafted argument parsing (`bin/neatcode.mjs:parseArgs`).
-- **Rationale**: NeatCode has two subcommands (`envelope` and `checks`) and a dozen flags. A 40-line `switch` statement handles this completely in under 2 milliseconds of startup time.
+- **Rationale**: NeatCode's four subcommands (`envelope`, `checks`, `guard`, `environment`) and their options are handled by a lightweight, zero-dependency parser in under 2 milliseconds of startup time.
 
 ---
 
 ## Consequences
 
-- **Instant Startup**: `neatcode envelope` starts and completes in milliseconds; there is no module-resolution latency across thousands of `node_modules` files.
+- **Instant Startup**: `neatcode envelope`, `neatcode guard`, and `neatcode environment` start and complete in milliseconds; there is no module-resolution latency across thousands of `node_modules` files.
 - **Infinite Portability**: The package installs anywhere Node $\ge 20$ is present, even in locked-down corporate enterprise networks without external internet access or npm proxy permissions.
 - **Zero Supply-Chain Risk**: NeatCode introduces zero transitive vulnerability vectors (CVEs) or supply-chain poisoning risks into the host development environment.

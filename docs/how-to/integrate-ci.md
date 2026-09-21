@@ -51,12 +51,19 @@ jobs:
           else npm install;
           fi
 
+      - name: Run Deterministic Anti-Slop Guards (Strict Gate)
+        run: |
+          npx @godspeedai/neatcode guard \
+            --baseline origin/${{ github.base_ref }} \
+            --strict
+
       - name: Build Change Envelope
         run: |
           npx @godspeedai/neatcode envelope \
             --range origin/${{ github.base_ref }}...HEAD \
             --verb review \
             --intent "${{ github.event.pull_request.title }}: ${{ github.event.pull_request.body }}" \
+            --guards \
             --verify "npm test" \
             > pr-envelope.md
 

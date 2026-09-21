@@ -24,12 +24,15 @@ flowchart LR
         GitTree["Git Working Tree / Diffs"]
         RepoMeta["Manifests & Instructions"]
         Proof["Declared Checks (npm, cargo)"]
+        EnvCaps["Machine & MCP Configs"]
     end
 
     subgraph NeatCodeHarness["NeatCode Evidence Harness (Node.js CLI)"]
         Acquire["Diff & Morphology Extraction"]
         ContextRing["1-Ring Context Expansion"]
         Verify["Check Execution Capture"]
+        Guards["Deterministic Guards (JS, TS, Py, Go, Rust)"]
+        EnvInv["Capability Inventory (Agents, MCP, Tools)"]
         Envelope[("Change Envelope<br/>(Structured Evidence)")]
     end
 
@@ -45,12 +48,19 @@ flowchart LR
     RepoMeta --> Acquire
     GitTree --> ContextRing
     Proof --> Verify
+    GitTree --> Guards
+    EnvCaps --> EnvInv
 
     Acquire --> Envelope
     ContextRing --> Envelope
     Verify --> Envelope
+    Guards -.-> Envelope
+    Guards --> GuardOut[("Guard Findings")]
+    EnvInv --> EnvOut[("Environment Inventory")]
 
     Envelope --> Orient
+    GuardOut --> Orient
+    EnvOut --> Orient
     Orient --> Archetype
     Archetype --> PreCritique
     PreCritique --> Gates
@@ -59,7 +69,7 @@ flowchart LR
 
 ---
 
-## The 7 Core Concepts You Need First
+## The 8 Core Concepts You Need First
 
 1. **The Change Envelope**: A diff alone cannot be judged. The envelope packages the diff with its changed-file context, repository instructions, declared architecture, observed morphology, local callers/dependencies, and verification proof ([`docs/mental-model.md`](mental-model.md)).
 2. **Earnedness**: *What concrete constraint earns this complexity?* Any abstraction, indirection, layer, or configuration option without a demonstrable real-world constraint is rejected ([`references/restraint.md`](../skills/neatcode/references/restraint.md)).
@@ -68,6 +78,7 @@ flowchart LR
 5. **Diff-Relative Fairness**: Every review finding is labeled by its relationship to the change: `introduced`, `worsened`, `exposed`, `pre-existing (blocking)`, `pre-existing (out of scope)`, or `resolved` ([`references/findings.md`](../skills/neatcode/references/findings.md)).
 6. **Repetition Is Not Intent**: A pattern repeated fifty times in a codebase may be an invariant, a reasonable convention, or the fossil record of historical residue. NeatCode explicitly separates them ([`docs/explanation/repetition-vs-intent.md`](explanation/repetition-vs-intent.md)).
 7. **Architectural Phenotype**: A codebase has two architectures: the one it claims in its documentation (genotype), and the one its imports and call graph actually express (phenotype). NeatCode measures conformance across six distinct verdicts ([`docs/subsystems/phenotype-engine.md`](subsystems/phenotype-engine.md)).
+8. **Deterministic Evidence vs. Judgment**: Mechanically provable syntactic checks (type laundering, empty spreads, broad contracts) are captured by the harness as objective facts via deterministic guards ([`docs/subsystems/deterministic-guards.md`](subsystems/deterministic-guards.md)) and environment inventory ([`docs/subsystems/environment-inventory.md`](subsystems/environment-inventory.md)), leaving design judgment and severity to the skill.
 
 ---
 
@@ -77,16 +88,16 @@ To see how the entire system cooperates at runtime:
 
 1. **Acquisition**: The developer stages changes and runs:
    ```bash
-   neatcode envelope --staged --verb review --verify "npm test"
+   neatcode envelope --staged --verb review --guards --verify "npm test"
    ```
-   The CLI harness extracts the unified diff, identifies modified files (`src/billing/resume.ts`), discovers `package.json` and `AGENTS.md`, expands direct callers (`src/routes/billing.ts`) and tests (`src/billing/resume.test.ts`), runs `npm test`, and outputs a Markdown envelope.
+   The CLI harness extracts the unified diff, identifies modified files (`src/billing/resume.ts`), discovers `package.json` and `AGENTS.md`, expands direct callers (`src/routes/billing.ts`) and tests (`src/billing/resume.test.ts`), runs `npm test`, executes deterministic anti-slop guards against the baseline, and outputs a Markdown envelope.
 2. **Ingestion & Orientation**: The developer pastes the envelope into their coding agent with `"neatcode review the staged changes"`. The skill kernel loads the envelope and identifies the change archetype as a *stateful domain operation*.
 3. **Reasoning Sequence**: The agent traces the five stages:
    - **Intent**: Did the change do what was asked?
    - **Surface**: Did unexpected files or dependencies enter the diff?
    - **Structure**: Does subscription state transition through the canonical authority?
    - **Semantics**: Is retry of capture idempotent?
-   - **Evidence**: Did the test actually exercise the failure path?
+   - **Evidence**: Did the test actually exercise the failure path? Did deterministic guards spot any unearned casts?
 4. **Findings & Critique**: The agent detects that `capture()` is retried without an idempotency key. It emits an **S1 · introduced** blocking finding with precise line citations, scores the six critique axes, and produces an actionable report.
 
 ---
@@ -97,14 +108,18 @@ Navigate this technical knowledge system based on your immediate goal:
 
 ### Get Something Done
 - [Getting Started Tutorial](getting-started.md) — Install the harness, configure your agent, and run your first review.
-- [Worked Recipes](recipes.md) — Six verbatim prompts and outputs across review, audit, restructure, study, and harden.
-- [How-To: CI Integration](how-to/integrate-ci.md) — Automate envelope creation in pull request pipelines.
+- [Worked Recipes](recipes.md) — Verbatim prompts and outputs across review, audit, restructure, study, and harden.
+- [How-To: Run Deterministic Guards](how-to/run-deterministic-guards.md) — Execute anti-slop scans standalone, against baselines, or in CI.
+- [How-To: Inventory Agent Environment](how-to/inventory-agent-environment.md) — Inspect available agents, redacted MCP servers, and toolchains.
+- [How-To: CI Integration](how-to/integrate-ci.md) — Automate envelope creation and strict guard gating in pull request pipelines.
 - [How-To: Generate `engineering.md`](how-to/generate-engineering-md.md) — Extract and maintain project engineering profiles.
 
 ### Understand the Architecture
 - [System Mental Model](mental-model.md) — The philosophy, mechanics, and conceptual boundaries of NeatCode.
 - [Architecture Blueprint](../architecture.md) — Process topology, logical layers, dependency invariants, and data contracts.
 - [Subsystem Guides](subsystems/) — Detailed design specifications for each harness and skill subsystem.
+- [Subsystem: Deterministic Guards](subsystems/deterministic-guards.md) — Language analyzers, masked source scanning, and finding model.
+- [Subsystem: Environment Inventory](subsystems/environment-inventory.md) — Agent detection, secret redaction, and MCP discovery.
 - [Execution Workflows](workflows/) — Numbered step-by-step traces with sequence diagrams.
 
 ### Explore Design Decisions

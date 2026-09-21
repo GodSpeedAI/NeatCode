@@ -59,7 +59,31 @@ This guide helps operators and maintainers diagnose and resolve errors encounter
 
 ---
 
-## 2. Cross-Platform & Environment Issues
+## 2. Guard Execution Failures
+
+### Symptom: `failures: [ { language: 'python', reason: 'runtime-not-runnable' } ]`
+- **Cause**: Python files were included in the scan scope, but the system `python3` runtime was not found on PATH.
+- **Source Location**: [`lib/guards/python.mjs:15-28`](../lib/guards/python.mjs#L15-L28) (`pythonProbe()`).
+- **Resolution**:
+  - Install Python ($\ge 3.8$) and ensure `python3` is available on the system PATH.
+  - NeatCode reports a missing runtime as an execution failure; it **never passes silently**.
+
+### Symptom: `neatcode guard` exits with status 1 in CI / Pre-commit
+- **Cause**: `--strict` was passed and one or more findings were detected, or an analyzer failed.
+- **Source Location**: [`bin/neatcode.mjs:189-204`](../bin/neatcode.mjs#L189-L204).
+- **Resolution**:
+  - Run `neatcode guard --staged` locally to inspect introduced findings.
+  - In PR pipelines, verify you are using `--baseline origin/main` rather than an unscoped scan so existing repository debt is classified as `pre-existing` rather than failing the build.
+
+### Symptom: `failures: [ { reason: 'analyzer-failure' } ]`
+- **Cause**: A target file contains severe syntax or parsing errors that caused the analyzer subprocess or scanner to fail.
+- **Source Location**: [`lib/guards/model.mjs:62-68`](../lib/guards/model.mjs#L62-L68) (`makeFailure()`).
+- **Resolution**:
+  - Verify that the target file compiles or parses using native toolchains (`python3 -m py_compile`, `tsc --noEmit`, etc.).
+
+---
+
+## 3. Cross-Platform & Environment Issues
 
 ### Symptom: Windows Path Separators / UNC Path Assertion Failures
 - **Cause**: When running on Windows or WSL over UNC shares (`\\wsl.localhost\...`), Node's `path.relative()` produces backslashes (`\`), whereas repository sets and URL targets expect forward slashes (`/`).

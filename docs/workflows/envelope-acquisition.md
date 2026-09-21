@@ -5,7 +5,7 @@ This workflow traces the deterministic extraction and assembly of a **Change Env
 ---
 
 ## Summary
-The operator or agent executes `neatcode envelope [scope] [options]`. The CLI parses scope flags, invokes Git to extract the raw unified diff, scans repository morphology and instructions, resolves one-ring context expansion for each changed file, executes requested verification commands, audits the envelope against schema invariants, and streams the structured result to `stdout`.
+The operator or agent executes `neatcode envelope [scope] [options]`. The CLI parses scope flags, invokes Git to extract the raw unified diff, scans repository morphology and instructions, resolves one-ring context expansion for each changed file, executes requested verification commands, optionally runs deterministic anti-slop guards (`--guards`), audits the envelope against schema invariants, and streams the structured result to `stdout`.
 
 ---
 
@@ -22,8 +22,9 @@ sequenceDiagram
     participant Repo as lib/repo.mjs
     participant Context as lib/context.mjs
     participant Verify as lib/verify.mjs
+    participant Guards as lib/guards/index.mjs
 
-    Operator->>CLI: neatcode envelope --staged --verb review --verify "npm test"
+    Operator->>CLI: neatcode envelope --staged --verb review --guards --verify "npm test"
     CLI->>Env: buildEnvelope(options)
     Env->>Git: repoRoot(cwd)
     Git-->>Env: root directory path
@@ -37,6 +38,10 @@ sequenceDiagram
     Context-->>Env: context rings (imports, callers, tests)
     Env->>Verify: runChecks(["npm test"], { cwd: root })
     Verify-->>Env: check execution summary
+    opt if options.guards enabled
+        Env->>Guards: runGuards({ root, paths: changedPaths, baseline })
+        Guards-->>Env: normalized guard findings & provenance
+    end
     Env->>CLI: assembled envelope object
     CLI->>Env: validateEnvelope(envelope)
     Env-->>CLI: problems array []
@@ -49,7 +54,7 @@ sequenceDiagram
 
 1. **Invocation & Argument Parsing**:
    - `bin/neatcode.mjs` executes in Node.js ($\ge 20$).
-   - `parseArgs(argv)` resolves the target scope (`--staged`, `--working-tree`, `--commit`, `--range`, etc.), target verb (`--verb review`), intent (`--intent ...`), and optional verification commands (`--verify`).
+   - `parseArgs(argv)` resolves the target scope (`--staged`, `--working-tree`, `--commit`, `--range`, etc.), target verb (`--verb review`), intent (`--intent ...`), verification commands (`--verify`), and optional guard flag (`--guards`).
 2. **Repository Root Discovery**:
    - `repoRoot()` runs `git rev-parse --show-toplevel`. If the current directory is not within a Git worktree, a `GitError` is raised.
 3. **Diff Acquisition**:
@@ -71,8 +76,10 @@ sequenceDiagram
 7. **Verification Capture**:
    - `discoverChecks()` probes manifests for declared test scripts.
    - If `--verify` commands were specified, `runChecks()` executes each via `child_process.spawnSync`, measures elapsed time, and captures condensed output.
-8. **Validation & Emission**:
-   - `validateEnvelope()` checks schema integrity.
+8. **Deterministic Guard Pass (Optional)**:
+   - If `--guards` is specified, `runGuards()` evaluates changed paths in supported languages against the scope baseline (`HEAD` or base commit), categorizing findings by provenance (`introduced`, `pre-existing`, etc.).
+9. **Validation & Emission**:
+   - `validateEnvelope()` checks schema integrity, including guard result constraints.
    - `toMarkdown()` or `JSON.stringify()` serializes the envelope to `process.stdout`.
 
 ---
@@ -87,12 +94,14 @@ sequenceDiagram
 - **Not in a Git repo**: Exits with code 1; writes `GitError` to `stderr`.
 - **Bad range specification**: Throws `GitError: not a commit range: <range>` and exits with code 1.
 - **Diff parsed to zero files**: When diff text exists but no files parse, `validateEnvelope()` reports an acquisition error. If `--strict` is set, exits with code 1.
+- **Guard execution failure**: If `--guards` was requested but an analyzer crashed or a required runtime is absent, `validateEnvelope` fails validation.
 
 ---
 
 ## Source Trail
-- [`bin/neatcode.mjs:138-155`](../../bin/neatcode.mjs#L138-L155) — Execution dispatch.
-- [`lib/envelope.mjs:33-112`](../../lib/envelope.mjs#L33-L112) — Main `buildEnvelope` algorithm.
-- [`lib/git.mjs:64-103`](../../lib/git.mjs#L64-L103) — Git diff acquisition.
-- [`lib/diff.mjs:57-139`](../../lib/diff.mjs#L57-L139) — Unified diff parser.
-- [`lib/context.mjs:110-127`](../../lib/context.mjs#L110-L127) — Bounded context expansion.
+- [`bin/neatcode.mjs`](../../bin/neatcode.mjs) — Execution dispatch.
+- [`lib/envelope.mjs`](../../lib/envelope.mjs) — Main `buildEnvelope` algorithm.
+- [`lib/git.mjs`](../../lib/git.mjs) — Git diff acquisition.
+- [`lib/diff.mjs`](../../lib/diff.mjs) — Unified diff parser.
+- [`lib/context.mjs`](../../lib/context.mjs) — Bounded context expansion.
+- [`lib/guards/index.mjs`](../../lib/guards/index.mjs) — Deterministic guards orchestration.

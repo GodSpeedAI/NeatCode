@@ -63,6 +63,16 @@ Every failure mode in NeatCode derives from two parent principles: **Earnedness*
 | **Change Discipline** | Scope creep & unreviewable diffs | Reformatting untouched files; bundled refactor | [`taxonomy/change-discipline.md`](../../skills/neatcode/references/taxonomy/change-discipline.md) |
 | **Maintainability Theater** | Ceremony over substance | Comment restating code; taxonomic naming sprawl | [`taxonomy/maintainability-theater.md`](../../skills/neatcode/references/taxonomy/maintainability-theater.md) |
 
+### Deterministic Guard Family Mapping (`lib/guards/taxonomy.mjs`)
+The 14 failure families are not solely qualitative heuristics for LLMs; they form the taxonomic backbone of NeatCode's deterministic analyzers. [`lib/guards/taxonomy.mjs`](../../lib/guards/taxonomy.mjs) maps every rule across JavaScript/TypeScript, Python, Go, and Rust directly to one canonical family:
+- **`contract`**: Broad types, parameter widening (`any`, `object`, `unknown`), missing type annotations.
+- **`authority`**: Ad-hoc reflection dispatch (`Reflect.apply`), dynamic dispatch switches.
+- **`state-and-concurrency`**: Blocking sleep in async routines, non-atomic mutations.
+- **`failure-handling`**: Swallowed exceptions, dynamic error erasure, panic calls outside tests.
+- **`security`**: `eval`/`exec` execution, unvalidated dynamic `getattr`.
+- **`tests`**: Module mocking in unit tests, error-string assertions, tests asserting mock state.
+- **`maintainability-theater`**: Trivial assertions, shape names in symbol declarations (`userListArray`).
+
 ---
 
 ## The 52 Pre-Completion Gates

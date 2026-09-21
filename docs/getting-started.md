@@ -29,7 +29,7 @@ neatcode --version
 
 **Expected output:**
 ```text
-1.0.0
+1.1.0
 ```
 
 *(If you prefer not to install globally, you can execute `node path/to/bin/neatcode.mjs` directly.)*
@@ -56,8 +56,9 @@ Copy the skill files into `~/.codex/skills/neatcode/` (for user-global scope) or
 
 ---
 
-## Step 3: Discover What Your Repository Considers Proof
+## Step 3: Discover Repository Checks & Environment Capabilities
 
+### 3a. Discover Declared Checks
 Navigate to any git repository containing code and run:
 
 ```bash
@@ -74,9 +75,18 @@ npm run lint	(package.json)
 npm run build	(package.json)
 ```
 
+### 3b. Inspect Local Agent Capabilities
+To see what agents, MCP services, and toolchains are available in your current environment:
+
+```bash
+neatcode environment
+```
+
+This reports active and installed agents, configured MCP server transports (with all secrets redacted), universal skill directories, and developer toolchains.
+
 ---
 
-## Step 4: Make a Change and Build the Change Envelope
+## Step 4: Make a Change, Run Guards, and Build the Envelope
 
 Make an edit or stage some files in your repository:
 
@@ -84,10 +94,20 @@ Make an edit or stage some files in your repository:
 git add -A
 ```
 
-Now execute the harness to build the change envelope:
+### 4a. Run a Deterministic Guard Pass
+Before creating the envelope, you can verify your staged changes against anti-slop rules:
 
 ```bash
-neatcode envelope --staged --verb review --verify "npm test"
+neatcode guard --staged
+```
+
+This immediately spots type-laundering, unannotated casts, empty spreads, broad `any` parameters, or unhandled exceptions in JS/TS, Python, Go, or Rust.
+
+### 4b. Build the Change Envelope
+Now execute the harness to build the complete change envelope:
+
+```bash
+neatcode envelope --staged --verb review --guards --verify "npm test"
 ```
 
 **What happens:**
@@ -96,7 +116,8 @@ neatcode envelope --staged --verb review --verify "npm test"
 3. The harness scans for repository instruction files (`AGENTS.md`, `CLAUDE.md`) and manifests.
 4. For each modified file, the harness expands one context ring: identifying the owning package, local imported modules, discoverable callers, and related test files.
 5. The harness runs `npm test` and captures the execution status and duration.
-6. A structured Markdown envelope is printed to `stdout`.
+6. The harness executes deterministic guards over changed files and labels findings against the `HEAD` baseline.
+7. A structured Markdown envelope is printed to `stdout`.
 
 ---
 
@@ -110,8 +131,9 @@ Copy the generated Markdown envelope from your terminal into your AI coding agen
 1. Loads the Change Envelope and classifies the change archetype (e.g. *stateful domain operation*).
 2. Traverses the 5-step reasoning sequence: **Intent $\rightarrow$ Surface $\rightarrow$ Structure $\rightarrow$ Semantics $\rightarrow$ Evidence**.
 3. Checks for duplicate implementations, bypassed canonical paths, and unearned abstractions.
-4. Runs the 52 pre-completion gates.
-5. Scores the 6 critique axes (1–5) and returns a structured review report.
+4. Evaluates any deterministic guard findings using the appropriate ecosystem overlay.
+5. Runs the 52 pre-completion gates.
+6. Scores the 6 critique axes (1–5) and returns a structured review report.
 
 **Example Report Output:**
 ```markdown
@@ -138,5 +160,7 @@ S3 · confirmed · introduced
 Now that you have executed your first review:
 - Learn the conceptual foundations in the [Mental Model Guide](mental-model.md).
 - Explore all five verbs in the [Worked Recipes](recipes.md).
+- Learn how to run standalone guard scans in [How-To: Run Deterministic Guards](how-to/run-deterministic-guards.md).
+- Learn how to audit your environment in [How-To: Inventory Agent Environment](how-to/inventory-agent-environment.md).
 - Integrate automated envelope generation into CI via [How-To: Integrate CI](how-to/integrate-ci.md).
 - Review all CLI options and flags in the [CLI Reference](reference/cli.md).

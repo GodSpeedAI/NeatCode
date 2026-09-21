@@ -54,6 +54,10 @@ A repeated code pattern that is followed for consistency across a codebase, but 
 A tri-level escalation protocol (`Trace`, `Standard`, `Deep`) chosen before starting work. Determines which gate groups and reasoning sequences execute. Critical domains (payments, auth, concurrency, migrations) automatically escalate to `Deep`.
 - *Source*: [`skills/neatcode/SKILL.md:114-129`](../skills/neatcode/SKILL.md#L114-L129)
 
+### Deterministic Guards
+Mechanically provable syntactic checks across JavaScript/TypeScript, Python, Go, and Rust. They output verifiable facts ("pattern X occurs at line Y"), never engineering verdicts.
+- *Source*: [`lib/guards/index.mjs`](../lib/guards/index.mjs), [`skills/neatcode/references/guards.md`](../skills/neatcode/references/guards.md)
+
 ---
 
 ## E
@@ -61,6 +65,10 @@ A tri-level escalation protocol (`Trace`, `Standard`, `Deep`) chosen before star
 ### Earnedness
 The core design discipline requiring every abstraction, interface, layer, dependency, or configuration knob to be justified by a demonstrable, concrete real-world constraint that exists *today*.
 - *Source*: [`skills/neatcode/references/restraint.md:8-30`](../skills/neatcode/references/restraint.md#L8-L30)
+
+### Ecosystem Overlay
+Language-specific guidance documents loaded at critique time to turn deterministic guard findings into repository judgments based on local idiom and trade-offs.
+- *Source*: [`skills/neatcode/references/ecosystems/`](../skills/neatcode/references/ecosystems/typescript.md)
 
 ### `engineering.md`
 A root-level repository document synthesized by `neatcode study` that captures the project's engineering DNA: claimed vs. observed architecture, authority maps, invariants, conventions, accepted patterns, prohibited patterns, and known technical debt. Every substantive claim carries a provenance tag (`explicit`, `observed`, `inferred`, `disputed`, `unknown`).
@@ -70,6 +78,10 @@ A root-level repository document synthesized by `neatcode study` that captures t
 Observable proof that supports an engineering claim. Claims are strictly categorized as `verified` (executed command with observed exit code), `inspected` (traced code path), or `assumed` (plausible hypothesis). Unrun checks are explicitly labeled `not-run`.
 - *Source*: [`skills/neatcode/references/evidence.md`](../skills/neatcode/references/evidence.md)
 
+### Environment Capability Inventory
+A structured survey of local development and agent capabilities (installed coding assistants, active executor, configured MCP servers with secret redaction, skill roots, and toolchains) assembled via `lib/env/` to inform agent implementation strategy.
+- *Source*: [`lib/env/index.mjs`](../lib/env/index.mjs), [`skills/neatcode/references/environment.md`](../skills/neatcode/references/environment.md)
+
 ---
 
 ## I
@@ -77,6 +89,14 @@ Observable proof that supports an engineering claim. Claims are strictly categor
 ### Invariant
 A property or rule that must hold true at all times for the software to remain coherent and correct. Violating an invariant breaks something nameable (e.g. data corruption, security hole, race condition).
 - *Source*: [`skills/neatcode/references/verbs/study.md:37-38`](../skills/neatcode/references/verbs/study.md#L37-L38)
+
+---
+
+## M
+
+### Masked-Source Scanning
+A technique implemented in `lib/guards/scan.mjs` that replaces comment and string literal contents with spaces while preserving exact line and column numbers, allowing regex-based syntax detectors to avoid false positives inside strings or comments without requiring full AST parsers.
+- *Source*: [`lib/guards/scan.mjs`](../lib/guards/scan.mjs)
 
 ---
 
@@ -139,6 +159,14 @@ The six standardized quality dimensions scored 1–5 before completion:
 6. **Evidence**: Verifiable proof for all claims.
 *Any score below 3 forces an implementation revision pass.*
 - *Source*: [`skills/neatcode/references/gates.md:94-110`](../skills/neatcode/references/gates.md#L94-L110)
+
+---
+
+## U
+
+### Upstream Engine Adapter
+The architectural pattern used in `lib/guards/python.mjs` that delegates to a vendored, zero-dependency Python package (`anti_slop`) executed via system `python3` subprocess, normalizing output into the unified finding model.
+- *Source*: [`lib/guards/python.mjs`](../lib/guards/python.mjs)
 
 ---
 

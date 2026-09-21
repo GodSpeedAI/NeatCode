@@ -9,6 +9,8 @@ This document is the formal reference specification for the `neatcode` command-l
 ```bash
 neatcode envelope [scope] [options]
 neatcode checks
+neatcode guard [options]
+neatcode environment [options]
 neatcode --version | -v
 neatcode --help | -h
 ```
@@ -22,6 +24,12 @@ Assembles and outputs a structured Change Envelope. Reads Git diffs, analyzes re
 
 ### `checks`
 Discovers and lists verification commands declared by the target repository without executing them. Probes `package.json`, `Cargo.toml`, `go.mod`, `pyproject.toml`, and `Makefile`.
+
+### `guard`
+Runs deterministic anti-slop analysis over JavaScript/TypeScript, Python, Go, and Rust files and outputs normalized findings. Languages are auto-detected from file extensions; `--language` restricts the run. Findings are output, not failure: exit `0` means the scan completed. Exit `1` means the run itself failed (missing runtime, unreadable file, analyzer crash) or `--strict` tripped on findings. Vendored guard reference sources (`guards/*/upstream/`) and generated/vendor/build directories are excluded unless `--all` is given.
+
+### `environment`
+Reports the machine capability inventory: installed coding agents, the current executor, configured agent services (MCP, secrets redacted), skill roots, and developer toolchains. Discovery never fails the command; per-section errors are carried in `*_error` fields. Always exits `0` on a completed inventory.
 
 ---
 
@@ -49,6 +57,7 @@ Specify **at most one** scope flag. If omitted, the default is `--working-tree`.
 | `--verb` | `<name>` | Sets target verb: `review`, `audit`, `restructure`, `study`, `harden`, `build`. | `review` |
 | `--intent` | `<text>` | Declares the requested outcome in the user's words. | `null` |
 | `--verify` | `<command>` | Executes a verification command in a subprocess and records the result. (Repeatable). | `[]` |
+| `--guards` | None | Includes deterministic guard evidence for the changed paths (baseline `HEAD` for diff scopes). Opt-in; ordinary envelopes stay cheap. | `false` |
 | `--json` | None | Emits raw JSON (Envelope Schema v1) instead of Markdown. | `false` |
 | `--strict` | None | Exits with status `1` if structural validation errors are detected in the envelope. | `false` |
 | `--max-diff-bytes` | `<n>` | Maximum byte length before the embedded unified diff is truncated. | `400000` |
@@ -57,13 +66,34 @@ Specify **at most one** scope flag. If omitted, the default is `--working-tree`.
 
 ---
 
+## Guard Options (`guard` Subcommand)
+
+| Flag | Argument | Description | Default |
+| :--- | :--- | :--- | :--- |
+| `--paths` | `<p> [p...]` | Files or directories to scan. | tracked files |
+| `--language` | `<name>` | `javascript` \| `typescript` \| `python` \| `go` \| `rust`. (Repeatable). | all detected |
+| `--staged` | None | Label findings against the staged diff (baseline `HEAD`). | `false` |
+| `--baseline` | `<rev>` | Label findings against the working tree vs `<rev>`. | none |
+| `--all` | None | Include generated files and vendored guard sources. | `false` |
+| `--json` | None | Emit the stable guard-result JSON instead of text. | `false` |
+| `--strict` | None | Exit `1` when any finding exists. | `false` |
+
+## Environment Options (`environment` Subcommand)
+
+| Flag | Argument | Description | Default |
+| :--- | :--- | :--- | :--- |
+| `--agents` | None | Show only the agent inventory. | all sections |
+| `--services` | None | Show only the agent-service (MCP) inventory. | all sections |
+| `--tools` | None | Show only toolchains and skill roots. | all sections |
+| `--json` | None | Emit the stable inventory JSON instead of text. | `false` |
+
 ## Exit Codes
 
 | Code | Name | Meaning |
 | :---: | :--- | :--- |
-| `0` | Success | Normal execution; envelope or check list emitted successfully. |
-| `1` | Failure | Subprocess failure, `GitError`, unhandled exception, or `--strict` schema validation problem. |
-| `2` | Usage Error | Invalid syntax, unknown CLI option, or missing required parameter value. |
+| `0` | Success | Normal execution; envelope, check list, guard result, or inventory emitted successfully. Guard findings are output, not failure. |
+| `1` | Failure | Subprocess failure, `GitError`, unhandled exception, `--strict` schema validation problem, incomplete guard run (missing runtime, unreadable file), or `--strict` guard findings. |
+| `2` | Usage Error | Invalid syntax, unknown CLI option/command, or missing required parameter value. |
 
 ---
 
@@ -92,6 +122,21 @@ neatcode envelope --repo --verb study --json
 ### Discover What the Repository Considers Proof
 ```bash
 neatcode checks
+```
+
+### Scan Staged Changes with Deterministic Guards
+```bash
+neatcode guard --staged
+```
+
+### Scan One Language as JSON
+```bash
+neatcode guard --paths src --language rust --json
+```
+
+### Inventory Installed Agents and Toolchains
+```bash
+neatcode environment --agents
 ```
 
 ---

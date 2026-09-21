@@ -6,7 +6,7 @@ This document is the formal schema specification for the Change Envelope emitted
 
 ## Schema Overview
 
-The envelope JSON adheres to schema revision `1` and comprises six top-level sections:
+The envelope JSON adheres to schema revision `1` and comprises top-level sections:
 1. `neatcode`: Metadata and schema version.
 2. `scope`: Invocation mode, target verb, base/head commit SHAs.
 3. `intent`: User-specified intent text.
@@ -14,6 +14,7 @@ The envelope JSON adheres to schema revision `1` and comprises six top-level sec
 5. `repository`: Morphology counts, top-level directory stats, instructions, manifests, workspace type.
 6. `context`: Array of 1-ring context expansion objects per changed file.
 7. `verification`: Declared repository checks and executed command logs.
+8. `guards`: Deterministic guard evidence (only populated with `--guards`; otherwise `{ran: false, ...}`).
 
 ---
 
@@ -140,6 +141,32 @@ The envelope JSON adheres to schema revision `1` and comprises six top-level sec
         "summary": "string"            // Condensed stdout/stderr output
       }
     ]
+  },
+  "guards": {
+    "ran": false,                      // Boolean: true only with --guards and a completed run
+    "languages": ["string"],           // Guard languages that ran, when ran
+    "findings": [                      // Normalized findings (see guard result model)
+      {
+        "rule_id": "string",           // e.g. "neatcode/rust/unsafe-without-safety-comment"
+        "neatcode_family": "string",   // Language-independent family (e.g. "type-laundering")
+        "upstream_rule_id": "string | null",
+        "language": "string",          // "javascript" | "typescript" | "python" | "go" | "rust"
+        "path": "string",
+        "line": 0,                     // 1-based
+        "column": 0 | null,            // 1-based, when available
+        "message": "string",
+        "deterministic": true,
+        "severity": "string",          // "error" | "warning"
+        "source": "string",            // "neatcode" | "upstream-engine"
+        "provenance": "string"         // "introduced" | "worsened" | "exposed" | "pre-existing", when baselined
+      }
+    ],
+    "resolved": [],                    // Baseline findings absent now (rule_id, path, baseline_count)
+    "failures": [],                    // Execution failures (language, path, reason, detail) — never clean
+    "provenance": {                    // Counts, when a baseline diff was available
+      "introduced": 0, "worsened": 0, "exposed": 0, "preExisting": 0, "resolved": 0
+    },
+    "clean": false                     // True only with zero findings AND zero failures
   }
 }
 ```
@@ -158,3 +185,5 @@ The envelope JSON adheres to schema revision `1` and comprises six top-level sec
 7. If `diffTruncated` is true, `diffBytes` must be populated.
 8. Every check in `verification.ran` must have `ran: boolean` and a valid status (`passed`, `failed`, `timeout`, `not-run`).
 9. Every context ring entry must specify `path`.
+10. `guards.ran` must be a boolean; when true, `guards.findings` must be an array.
+11. `guards.clean` must be false whenever findings or failures exist.

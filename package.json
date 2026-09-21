@@ -36,7 +36,8 @@
   "files": [
     "skills",
     "bin",
-    "lib"
+    "lib",
+    "guards"
   ],
   "skill": {
     "entry": "skills/neatcode/SKILL.md",

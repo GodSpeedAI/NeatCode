@@ -53,8 +53,9 @@ sequenceDiagram
 - **Semantics**: Analyzes error handling, nullability, concurrency, and security boundaries.
 - **Evidence**: Checks whether added tests fail without the patch, or whether assertions are tautological.
 
-### 3. Load Failure Taxonomy Families
+### 3. Load Failure Taxonomy Families & Deterministic Guards
 For agent-authored patches, the reviewer always loads [`taxonomy/epistemic.md`](../../skills/neatcode/references/taxonomy/epistemic.md) and [`taxonomy/context.md`](../../skills/neatcode/references/taxonomy/context.md) to detect invented APIs and duplicated utilities.
+When the envelope includes deterministic guard findings or when scanning guarded languages, the reviewer loads [`references/guards.md`](../../skills/neatcode/references/guards.md) and the relevant ecosystem overlays ([`references/ecosystems/typescript.md`](../../skills/neatcode/references/ecosystems/typescript.md), [`python.md`](../../skills/neatcode/references/ecosystems/python.md), [`go.md`](../../skills/neatcode/references/ecosystems/go.md), [`rust.md`](../../skills/neatcode/references/ecosystems/rust.md)) to translate syntactic facts into repository judgments.
 
 ### 4. Assign Provenance
 Every defect is labeled to guarantee fairness:
@@ -65,6 +66,8 @@ Every defect is labeled to guarantee fairness:
 - `pre-existing (out of scope)`: Surrounding debt not caused by this patch.
 - `resolved`: Existing defect fixed by this patch.
 
+Deterministic guard findings are automatically pre-labeled with diff-relative provenance against the baseline.
+
 ### 5. Gate Audit & Critique
 Runs the pre-completion gates from [`references/gates.md`](../../skills/neatcode/references/gates.md), evaluates the six critique axes (correctness, repository fit, semantic integrity, restraint, operational credibility, evidence), and emits the standardized review block.
 
@@ -74,3 +77,4 @@ Runs the pre-completion gates from [`references/gates.md`](../../skills/neatcode
 - [`skills/neatcode/references/verbs/review.md`](../../skills/neatcode/references/verbs/review.md) — Review verb specification.
 - [`skills/neatcode/references/reasoning.md`](../../skills/neatcode/references/reasoning.md) — Five-step reasoning protocol.
 - [`skills/neatcode/references/findings.md`](../../skills/neatcode/references/findings.md) — Severity and provenance rules.
+- [`skills/neatcode/references/guards.md`](../../skills/neatcode/references/guards.md) — Deterministic guards reasoning and finding judgment.

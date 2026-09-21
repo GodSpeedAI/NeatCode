@@ -163,6 +163,12 @@ neatcode envelope --paths src/billing --verb audit
 neatcode envelope --repo --verb study
 ```
 
+`neatcode envelope --guards` additionally embeds deterministic guard evidence
+for the changed paths (opt-in; ordinary envelopes stay cheap). `neatcode guard`
+and `neatcode environment` are available standalone — see
+[`references/guards.md`](references/guards.md) and
+[`references/environment.md`](references/environment.md).
+
 Use it when it is available — it removes a whole class of "I forgot to check whether tests
 were touched" errors, and it records whether a verification command *actually ran*. When it
 is not available, gather the same material with plain git commands; the envelope is a
@@ -278,6 +284,14 @@ Read before writing. In order:
    common context failure in the catalogue.
 5. **Verification reality** — what does this repository accept as proof? `neatcode checks`
    lists what it declares.
+6. **Deterministic signals, when cheap** — if the task touches source files in a
+   guarded language (JavaScript/TypeScript, Python, Go, Rust), capture a guard
+   baseline (`neatcode guard --paths <area>`) so later findings can be
+   attributed correctly. If the implementation strategy depends on local
+   capability (parsers, MCP bridges, tool integrations, verification
+   commands), consult `neatcode environment`. Neither is mandatory at Trace
+   depth or for trivial tasks. Load [`references/guards.md`](references/guards.md)
+   and [`references/environment.md`](references/environment.md) only when you act on them.
 
 Emit a short orientation block with file:line citations — five lines, not a report:
 
@@ -380,6 +394,12 @@ Ask the question that matters more than coverage: **could this test have failed 
 change?** A test written after the implementation, asserting what the implementation
 happens to do, proves the implementation is self-consistent and nothing else.
 
+Then run the diff-scoped deterministic guard pass when the change touches a
+guarded language (`neatcode guard --staged`, or `--baseline <rev>`): it labels
+deterministic findings introduced · worsened · exposed · pre-existing ·
+resolved against your Step 0 baseline. A guard finding is evidence for the
+critique, not its verdict — see [`references/guards.md`](references/guards.md).
+
 ### 8 · Critique before completion
 
 Run the gates in [`references/gates.md`](references/gates.md) — load it at this step, not
@@ -430,6 +450,17 @@ the task needs.
   — load at Steps 2–3; skip at Trace depth.
 
 **Conditional:**
+- [`references/guards.md`](references/guards.md) — load when running or
+  judging deterministic guard findings (baseline at Step 0, diff-scoped pass
+  at Step 7, or any `neatcode guard` / `envelope --guards` output).
+- Ecosystem overlays — load the ones matching the languages with findings,
+  at critique time: [`typescript`](references/ecosystems/typescript.md) ·
+  [`python`](references/ecosystems/python.md) ·
+  [`go`](references/ecosystems/go.md) · [`rust`](references/ecosystems/rust.md).
+  They turn a finding into a repository judgment; never auto-load all four.
+- [`references/environment.md`](references/environment.md) — load when the
+  implementation strategy depends on installed agents, MCP services, skill
+  roots, or toolchains (`neatcode environment`).
 - [`references/architecture/phenotype.md`](references/architecture/phenotype.md) — the
   declared-vs-observed conformance protocol. Load at **Deep** depth, for `audit` and `study`,
   and whenever a change touches a module boundary.

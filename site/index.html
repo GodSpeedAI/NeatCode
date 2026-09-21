@@ -46,6 +46,10 @@
     <span class="label">verbs — review, audit, restructure, study, harden</span>
   </div>
   <div>
+    <span class="figure">4</span>
+    <span class="label">languages with zero-dependency deterministic guards (JS/TS, Python, Go, Rust)</span>
+  </div>
+  <div>
     <span class="figure">14</span>
     <span class="label">failure families, each with its exceptions and false positives</span>
   </div>
@@ -354,7 +358,8 @@ npm install -g @godspeedai/neatcode  <span class="c"># the envelope harness (opt
     harness is what makes “did that check actually run?” auditable.
   </p>
   <pre class="code"><code>git add -A
-neatcode envelope --staged --verb review --verify "npm test"
+neatcode guard --staged                                        <span class="c"># optional deterministic check</span>
+neatcode envelope --staged --verb review --guards --verify "npm test"
 <span class="c"># then, in your agent: "neatcode review the staged changes"</span></code></pre>
 </section>
 

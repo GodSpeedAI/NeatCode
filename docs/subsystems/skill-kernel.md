@@ -68,22 +68,24 @@ Walked on every verb ([`references/reasoning.md`](../../skills/neatcode/referenc
 
 ### 3. The 9-Step Default Build Flow
 Prevents post-hoc rationalization by enforcing discipline *before* syntax is emitted:
-- **Step 0: Orient**: Reads `engineering.md`, repository instructions (`AGENTS.md`), manifests, and locates the canonical path.
+- **Step 0: Orient**: Reads `engineering.md`, repository instructions (`AGENTS.md`), manifests, locates the canonical path, captures a guard baseline (`neatcode guard --paths <area>`) when touching guarded languages, and consults `neatcode environment` if the strategy depends on machine capabilities.
 - **Step 1: Contract**: Restates required and preserved behavior in $\le 5$ lines.
 - **Step 2: Archetype**: Categorizes the change into one of 11 archetypes ([`references/archetypes.md`](../../skills/neatcode/references/archetypes.md)).
 - **Step 3: Profile**: Inherits one of 7 engineering profiles from surrounding code ([`references/profiles.md`](../../skills/neatcode/references/profiles.md)).
 - **Step 4: Structure before Syntax**: Names canonical owner, state guarantees, and earning constraints.
 - **Step 5: Plan**: Emits a compact plan block for user review.
 - **Step 6: Implement**: Smallest coherent change, matching local idioms, wiring end-to-end.
-- **Step 7: Verify**: Executes repository-declared proof commands; verifies regression testability.
+- **Step 7: Verify**: Executes repository-declared proof commands; verifies regression testability; runs the diff-scoped deterministic guard pass (`neatcode guard --staged`).
 - **Step 8: Critique before Completion**: Loads [`references/gates.md`](../../skills/neatcode/references/gates.md), evaluates 52 gates, scores the 6 critique axes, and emits the completion block.
 
 ---
 
 ## Progressive Reference Loading Engine
-To avoid saturating the LLM context window with thousands of lines of rules, references are loaded conditionally ([`SKILL.md:409-456`](../../skills/neatcode/SKILL.md#L409-L456)):
+To avoid saturating the LLM context window with thousands of lines of rules, references are loaded conditionally ([`SKILL.md`](../../skills/neatcode/SKILL.md)):
 - **Always loaded**: [`restraint.md`](../../skills/neatcode/references/restraint.md) and [`taxonomy.md`](../../skills/neatcode/references/taxonomy.md) (the slim routing index).
 - **Loaded selectively**: The agent reads the taxonomy index and opens only the 2–4 family files implicated by the task (e.g. `taxonomy/security.md` for auth paths).
+- **Guards & Ecosystem Overlays**: [`references/guards.md`](../../skills/neatcode/references/guards.md) is loaded when running or judging guard findings. Matching ecosystem overlays ([`typescript.md`](../../skills/neatcode/references/ecosystems/typescript.md), [`python.md`](../../skills/neatcode/references/ecosystems/python.md), [`go.md`](../../skills/neatcode/references/ecosystems/go.md), [`rust.md`](../../skills/neatcode/references/ecosystems/rust.md)) are opened at critique time to turn findings into repository judgments.
+- **Environment Inventory**: [`references/environment.md`](../../skills/neatcode/references/environment.md) is loaded when implementation strategy depends on installed agents, MCP services, or toolchains.
 - **Post-implementation only**: [`gates.md`](../../skills/neatcode/references/gates.md) is loaded exclusively at Step 8 so it acts as an honest audit rather than an in-generation checklist.
 
 ---
@@ -107,8 +109,10 @@ The skill kernel maintains no persistent filesystem state except when explicitly
 ---
 
 ## Source Trail
-- [`skills/neatcode/SKILL.md:1-532`](../../skills/neatcode/SKILL.md#L1-L532) — Main skill definition, disciplines, and execution lifecycle.
+- [`skills/neatcode/SKILL.md`](../../skills/neatcode/SKILL.md) — Main skill definition, disciplines, and execution lifecycle.
 - [`skills/neatcode/references/restraint.md`](../../skills/neatcode/references/restraint.md) — The earnedness test and complexity budget.
 - [`skills/neatcode/references/evidence.md`](../../skills/neatcode/references/evidence.md) — The three states of evidence and verification standards.
+- [`skills/neatcode/references/guards.md`](../../skills/neatcode/references/guards.md) — Deterministic guards reasoning and finding judgment.
+- [`skills/neatcode/references/environment.md`](../../skills/neatcode/references/environment.md) — Machine capability inventory orientation.
 - [`skills/neatcode/references/gates.md`](../../skills/neatcode/references/gates.md) — The 52 pre-completion gates and six critique axes.
 - [`test/skill-integrity.test.mjs`](../../test/skill-integrity.test.mjs) — Integrity test asserting reachability of all reference files.
