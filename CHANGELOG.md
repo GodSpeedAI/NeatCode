@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/GodSpeedAI/NeatCode/compare/v1.1.0...v1.2.0) (2026-09-22)
+
+
+### Features
+
+* add multi-language code guards, environment tools, and ecosystem references ([4175e01](https://github.com/GodSpeedAI/NeatCode/commit/4175e013bc9c34fea189d2d8e8faaae087d746cc))
+* implement self-update, 24-hour soak policy, and version coherence ([#4](https://github.com/GodSpeedAI/NeatCode/issues/4)) ([7605d75](https://github.com/GodSpeedAI/NeatCode/commit/7605d7523cde8172efedee30a94e500c207aae4b))
+
 ## [1.1.0](https://github.com/GodSpeedAI/NeatCode/compare/v1.0.1...v1.1.0) (2026-09-03)
 
 

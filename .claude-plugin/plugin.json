@@ -1,7 +1,7 @@
 {
   "name": "neatcode",
   "description": "Software-engineering judgment for AI coding agents. Reviews diffs, audits repositories, restructures weak implementations, hardens for production, and extracts engineering DNA — so generated code is reasoned, not generated.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": {
     "name": "GodSpeedAI",
     "url": "https://github.com/GodSpeedAI"
