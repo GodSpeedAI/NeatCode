@@ -94,6 +94,12 @@ test('skill frontmatter is well formed and matches the package version', () => {
     encoding: 'utf8',
   }).trim();
   assert.equal(cliVersion, pkg.version, 'bin/neatcode.mjs --version must match package.json');
+
+  const pluginManifest = JSON.parse(readFileSync(join(ROOT, '.claude-plugin', 'plugin.json'), 'utf8'));
+  assert.equal(pluginManifest.version, pkg.version, '.claude-plugin/plugin.json version must match package.json');
+
+  const releaseManifest = JSON.parse(readFileSync(join(ROOT, '.release-please-manifest.json'), 'utf8'));
+  assert.equal(releaseManifest['.'], pkg.version, '.release-please-manifest.json version must match package.json');
 });
 
 test('every relative link inside the skill resolves', () => {
@@ -228,7 +234,7 @@ test('no stale product name survives outside attribution and history', () => {
 test('documented commands match the CLI surface', () => {
   const cli = readFileSync(join(ROOT, 'bin', 'neatcode.mjs'), 'utf8');
   const flags = new Set([...cli.matchAll(/case '(--[a-z-]+)'/g)].map((m) => m[1]));
-  const commands = new Set([...cli.matchAll(/case '(envelope|checks|guard|environment)'/g)].map((m) => m[1]));
+  const commands = new Set([...cli.matchAll(/case '(envelope|checks|guard|environment|update|doctor)'/g)].map((m) => m[1]));
 
   const docs = [
     SKILL,
