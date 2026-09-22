@@ -11,6 +11,8 @@ neatcode envelope [scope] [options]
 neatcode checks
 neatcode guard [options]
 neatcode environment [options]
+neatcode update [options]
+neatcode doctor [options]
 neatcode --version | -v
 neatcode --help | -h
 ```
@@ -30,6 +32,12 @@ Runs deterministic anti-slop analysis over JavaScript/TypeScript, Python, Go, an
 
 ### `environment`
 Reports the machine capability inventory: installed coding agents, the current executor, configured agent services (MCP, secrets redacted), skill roots, and developer toolchains. Discovery never fails the command; per-section errors are carried in `*_error` fields. Always exits `0` on a completed inventory.
+
+### `update`
+Resolves eligible releases and updates the complete managed installation. Enforces the 24-hour soak policy, synchronizes canonical managed skills, and reconciles all active agent exposure points without overwriting locally modified files.
+
+### `doctor`
+Diagnoses NeatCode distribution coherence, CLI integrity, deterministic guards, reference link integrity, agent exposure states, and available releases.
 
 ---
 
@@ -87,6 +95,22 @@ Specify **at most one** scope flag. If omitted, the default is `--working-tree`.
 | `--tools` | None | Show only toolchains and skill roots. | all sections |
 | `--json` | None | Emit the stable inventory JSON instead of text. | `false` |
 
+## Update Options (`update` Subcommand)
+
+| Flag | Argument | Description | Default |
+| :--- | :--- | :--- | :--- |
+| `--check` | None | Read-only check for updates and installation drift without modifying disk. | `false` |
+| `--yes`, `-y` | None | Noninteractive confirmation for safe updates in automation. | `false` |
+| `--force` | None | Permit installation of a release still inside the 24-hour soak window. | `false` |
+| `--repair` | None | Reconcile drifted managed skills to the installed NeatCode distribution. | `false` |
+| `--json` | None | Emit update candidate payload JSON instead of formatted text. | `false` |
+
+## Doctor Options (`doctor` Subcommand)
+
+| Flag | Argument | Description | Default |
+| :--- | :--- | :--- | :--- |
+| `--json` | None | Emit diagnostic report JSON instead of formatted text. | `false` |
+
 ## Exit Codes
 
 | Code | Name | Meaning |
@@ -137,6 +161,26 @@ neatcode guard --paths src --language rust --json
 ### Inventory Installed Agents and Toolchains
 ```bash
 neatcode environment --agents
+```
+
+### Check for Updates and Soak State
+```bash
+neatcode update --check
+```
+
+### Force Early Installation of a Soaking Release
+```bash
+neatcode update --force
+```
+
+### Reconcile Drifted Installations
+```bash
+neatcode update --repair
+```
+
+### Diagnose System Coherence
+```bash
+neatcode doctor
 ```
 
 ---

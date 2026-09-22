@@ -382,6 +382,19 @@ skill roots, toolchains:
 neatcode environment
 ```
 
+Diagnose NeatCode distribution and installations:
+
+```bash
+neatcode doctor
+```
+
+Check for available updates and maintain managed installations:
+
+```bash
+neatcode update --check
+neatcode update
+```
+
 The harness gathers and structures evidence.
 
 It does not decide whether the code is good.
@@ -1271,6 +1284,50 @@ NeatCode does not stamp application source code.
 A comment claiming that code was reviewed is not evidence that the current version remains reviewed.
 
 The review belongs in the review record.
+
+---
+
+## Self-Update, Soak Policy & Doctor
+
+NeatCode maintains a **single canonical version** identifying one coherent, immutable distribution spanning the CLI, deterministic guards, environment inventory, and managed agent skills.
+
+### Updating NeatCode
+
+Update your complete installation and all managed agent exposure points with one command:
+
+```bash
+neatcode update
+```
+
+Inspect available releases without applying changes:
+
+```bash
+neatcode update --check
+```
+
+Reconcile any drifted agent skill links or copies back to the installed distribution:
+
+```bash
+neatcode update --repair
+```
+
+### The 24-Hour Release Soak Policy
+
+NeatCode normally installs releases only after they have been published for more than 24 hours. `--force` explicitly opts into a release still inside that soak window:
+
+```bash
+neatcode update --force
+```
+
+`--force` has one narrow meaning: permitting installation of a release still inside its 24-hour soak window. It does not overwrite locally modified skills, ignore corrupted state, or bypass verification failures.
+
+### Diagnosing Coherence
+
+Run `neatcode doctor` to diagnose the complete distribution and all detected agent exposures:
+
+```bash
+neatcode doctor
+```
 
 ---
 

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // NeatCode's evidence harness. It acquires and structures evidence:
-// change envelopes, deterministic guard findings, environment inventory.
+// change envelopes, deterministic guard findings, environment inventory,
+// and manages self-update and installation diagnostics.
 // It never judges any of it — that is the skill's job.
 
 import { readFileSync } from 'node:fs';
@@ -9,6 +10,17 @@ import { discoverChecks } from '../lib/verify.mjs';
 import { repoRoot } from '../lib/git.mjs';
 import { runGuards, formatGuardsHuman, validateGuardResult, SUPPORTED_LANGUAGES } from '../lib/guards/index.mjs';
 import { collectEnvironment, formatEnvironmentHuman } from '../lib/env/index.mjs';
+import {
+  fetchPackageMetadata,
+  resolveUpdateCandidates,
+  formatUpdateStatusHuman,
+  reconcileAllInstallations,
+  runDoctor,
+  formatDoctorHuman,
+  executeUpdate,
+  finalizeUpdate,
+  passiveUpdateCheck,
+} from '../lib/update/index.mjs';
 
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
 const VERSION = pkg.version;
@@ -20,6 +32,8 @@ Usage
   neatcode checks                       List verification commands the repo declares
   neatcode guard [options]              Run deterministic anti-slop guards
   neatcode environment [options]        Show machine capability inventory
+  neatcode update [options]             Update NeatCode and managed skills
+  neatcode doctor [options]             Diagnose NeatCode distribution and installations
   neatcode --version | --help
 
 Scope (envelope; pick one; default is the working tree)
@@ -56,6 +70,16 @@ Environment options
   --tools                  Show only toolchains and skills
   --json                   Emit JSON instead of human-readable text
 
+Update options
+  --check                  Check for updates without modifying installation
+  --yes                    Noninteractive confirmation for safe updates
+  --force                  Allow installing releases within the 24h soak window
+  --repair                 Reconcile drifted managed skills to installed version
+  --json                   Emit JSON instead of human-readable text
+
+Doctor options
+  --json                   Emit JSON instead of human-readable text
+
 Exit codes
   0  success (guard: scan completed; findings are output, not failure)
   1  execution failure, strict validation/guard failure, or guard run incomplete
@@ -69,6 +93,10 @@ Examples
   neatcode guard --staged
   neatcode guard --paths src --language rust --json
   neatcode environment --agents
+  neatcode update --check
+  neatcode update --force
+  neatcode update --repair
+  neatcode doctor
 `;
 
 function parseArgs(argv) {
@@ -88,6 +116,11 @@ function parseArgs(argv) {
     staged: false,
     baseline: null,
     envSections: [],
+    check: false,
+    yes: false,
+    force: false,
+    repair: false,
+    targetVersion: null,
   };
   const rest = [...argv];
   while (rest.length) {
@@ -95,7 +128,7 @@ function parseArgs(argv) {
     switch (arg) {
       case '--help': case '-h': return { help: true };
       case '--version': case '-v': return { version: true };
-      case 'envelope': case 'checks': case 'guard': case 'environment': opts.command = arg; break;
+      case 'envelope': case 'checks': case 'guard': case 'environment': case 'update': case 'doctor': case '_update-finalize': opts.command = arg; break;
       case '--working-tree': opts.source.mode = 'working-tree'; break;
       case '--staged': case '--cached':
         opts.source.mode = 'staged';
@@ -127,6 +160,11 @@ function parseArgs(argv) {
       case '--json': opts.json = true; break;
       case '--strict': opts.strict = true; break;
       case '--max-diff-bytes': opts.maxDiffBytes = Number(need(rest, arg)); break;
+      case '--check': opts.check = true; break;
+      case '--yes': case '-y': opts.yes = true; break;
+      case '--force': opts.force = true; break;
+      case '--repair': opts.repair = true; break;
+      case '--target-version': opts.targetVersion = need(rest, arg); break;
       default:
         if (arg.startsWith('-')) throw new Error(`unknown option: ${arg}`);
         if (!opts.command) opts.command = arg;
@@ -200,7 +238,115 @@ async function runEnvironmentCommand(opts) {
   return 0;
 }
 
-function main(argv) {
+async function runUpdateCommand(opts) {
+  const root = scanRoot();
+
+  // Repair path: reconcile managed skills across active agent roots
+  if (opts.repair) {
+    const res = reconcileAllInstallations({ project: root });
+    if (opts.json) {
+      process.stdout.write(`${JSON.stringify(res, null, 2)}\n`);
+    } else {
+      process.stdout.write('NeatCode Installation Repair\n\n');
+      for (const item of res.reconciled) {
+        process.stdout.write(`  ${item.result.success ? '✓' : '!'} ${item.agent.padEnd(20)} ${item.result.reason}\n`);
+      }
+      process.stdout.write('\n');
+      if (res.warnings.length) {
+        process.stdout.write('Warnings:\n');
+        for (const w of res.warnings) process.stdout.write(`  - ${w}\n`);
+        process.stdout.write('\n');
+      }
+      process.stdout.write('Repair completed.\n');
+    }
+    return 0;
+  }
+
+  // Fetch registry metadata and resolve update candidates
+  let meta;
+  try {
+    meta = await fetchPackageMetadata();
+  } catch (error) {
+    process.stderr.write(`neatcode update: failed to fetch registry metadata — ${error.message}\n`);
+    return 1;
+  }
+
+  const plan = resolveUpdateCandidates({
+    installedVersion: VERSION,
+    versions: meta.versions,
+    time: meta.time,
+    now: meta.serverDate ?? new Date(),
+    force: opts.force,
+  });
+
+  const doc = await runDoctor({ project: root, checkRemote: false });
+  const hasDrift = doc.repairableCount > 0;
+
+  if (opts.check) {
+    if (opts.json) {
+      process.stdout.write(`${JSON.stringify({ ...plan, installationDrift: hasDrift }, null, 2)}\n`);
+    } else {
+      process.stdout.write(formatUpdateStatusHuman(plan, { installationDrift: hasDrift }));
+    }
+    return 0;
+  }
+
+  // Mutation path: perform update
+  if (!plan.updateAvailable) {
+    if (plan.forceRequired) {
+      process.stdout.write(formatUpdateStatusHuman(plan, { installationDrift: hasDrift }));
+      return 1;
+    }
+    if (hasDrift) {
+      process.stdout.write(`NeatCode ${VERSION} executable is current, but installation drift was detected.\nReconciling installations...\n\n`);
+      reconcileAllInstallations({ project: root });
+      process.stdout.write('Installations reconciled.\n');
+      return 0;
+    }
+    process.stdout.write(`NeatCode ${VERSION} is up to date.\n`);
+    return 0;
+  }
+
+  process.stdout.write(`Updating NeatCode ${VERSION} → ${plan.targetVersion}...\n`);
+  const updateResult = await executeUpdate({
+    targetVersion: plan.targetVersion,
+    project: root,
+  });
+
+  if (!updateResult.success) {
+    process.stderr.write(`neatcode update error: ${updateResult.message}\n`);
+    return 1;
+  }
+
+  process.stdout.write(`${updateResult.message}\n`);
+  return 0;
+}
+
+async function runDoctorCommand(opts) {
+  const root = scanRoot();
+  const doc = await runDoctor({ project: root });
+  if (opts.json) {
+    process.stdout.write(`${JSON.stringify(doc, null, 2)}\n`);
+  } else {
+    process.stdout.write(formatDoctorHuman(doc));
+  }
+  return doc.distribution.coherent ? 0 : 1;
+}
+
+async function runFinalizeCommand(opts) {
+  const root = scanRoot();
+  const res = await finalizeUpdate({
+    targetVersion: opts.targetVersion,
+    project: root,
+  });
+  if (!res.success) {
+    for (const err of res.errors) process.stderr.write(`neatcode finalize error: ${err}\n`);
+    return 1;
+  }
+  return 0;
+}
+
+async function main(argv) {
   let opts;
   try {
     opts = parseArgs(argv);
@@ -218,6 +364,11 @@ function main(argv) {
     return 0;
   }
 
+  // Trigger passive update check quietly in background for standard commands
+  if (opts.command && !['update', 'doctor', '_update-finalize'].includes(opts.command) && !opts.json) {
+    passiveUpdateCheck({ installedVersion: VERSION }).catch(() => {});
+  }
+
   try {
     if (opts.command === 'checks') {
       const root = repoRoot(process.cwd());
@@ -233,6 +384,12 @@ function main(argv) {
     if (opts.command === 'guard') return runGuardCommand(opts);
 
     if (opts.command === 'environment') return runEnvironmentCommand(opts);
+
+    if (opts.command === 'update') return await runUpdateCommand(opts);
+
+    if (opts.command === 'doctor') return await runDoctorCommand(opts);
+
+    if (opts.command === '_update-finalize') return await runFinalizeCommand(opts);
 
     if (opts.command !== 'envelope') {
       process.stderr.write(`neatcode: unknown command "${opts.command}"\n\n${HELP}`);
@@ -261,16 +418,14 @@ function main(argv) {
   }
 }
 
-// runEnvironmentCommand is async; keep process alive until it settles.
-const code = main(process.argv.slice(2));
-if (code && typeof code.then === 'function') {
-  code.then(
+// Keep process alive until async main settles
+const codePromise = main(process.argv.slice(2));
+if (codePromise && typeof codePromise.then === 'function') {
+  codePromise.then(
     (exit) => { process.exitCode = exit; },
     (error) => {
       process.stderr.write(`neatcode: ${error.message}\n`);
       process.exitCode = 1;
     },
   );
-} else {
-  process.exitCode = code;
 }
